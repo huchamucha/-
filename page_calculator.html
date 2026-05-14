@@ -1,95 +1,397 @@
 <section class="page-hero">
   <div class="container page-hero__inner">
-    <div class="breadcrumbs"><a href="index.html">Главная</a><span>›</span>Материалы и асфальт</div>
-    <span class="eyebrow">Производство · Доставка · Укладка</span>
-    <h1 class="page-hero__title">Асфальт и материалы для <b>дорожного строительства</b></h1>
-    <p class="page-hero__lead">Производим и реализуем асфальтобетонные смеси, ЩПС, песок и щебень с собственной производственной базы. Выполняем дорожные работы под ключ с гарантией по договору.</p>
-    <div style="margin-top:18px;display:flex;gap:12px;flex-wrap:wrap">
-      <a class="btn btn--primary" href="contacts.html">Запросить прайс</a>
-      <a class="btn btn--ghost" href="calculator.html">Калькулятор стоимости</a>
-    </div>
+    <div class="breadcrumbs"><a href="index.html">Главная</a><span>›</span>Калькулятор</div>
+    <span class="eyebrow">Онлайн-расчёт · Материалы, работы, доставка</span>
+    <h1 class="page-hero__title">Калькулятор <b>полной сметы</b></h1>
+    <p class="page-hero__lead">Введите площадь, толщину и расстояние доставки — расчёт обновляется автоматически. Получите смету по материалам, работам и доставке за минуту.</p>
   </div>
 </section>
- 
+
 <section class="section">
   <div class="container">
-    <span class="eyebrow">Прайс-лист</span>
-    <h2 class="h2">Материалы со склада и под заказ</h2>
-    <p class="lead" style="margin-bottom:26px">Цены указаны при покупке от 1 тонны / 1 м³ без учёта доставки. Доставка собственным транспортом по Новосибирску и НСО — рассчитывается отдельно.</p>
-    <table class="kvtable">
-      <thead><tr><th>Наименование</th><th>Ед. изм.</th><th>Цена, ₽</th><th>Назначение</th></tr></thead>
-      <tbody>
-        <tr><td><b style="color:#fff">Асфальтобетонная смесь Б‑II</b></td><td>тонна</td><td>от 5 000</td><td>Покрытие дорог, дворов, площадок</td></tr>
-        <tr><td><b style="color:#fff">Асфальтобетон тип Б‑I</b></td><td>тонна</td><td>от 5 500</td><td>Верхний слой покрытия с повышенной износостойкостью</td></tr>
-        <tr><td><b style="color:#fff">ЩПС (С4, С5)</b></td><td>тонна</td><td>от 1 100</td><td>Основания дорог, подъездные пути</td></tr>
-        <tr><td><b style="color:#fff">Щебень фр. 5‑20</b></td><td>тонна</td><td>от 1 300</td><td>Основания, дренаж, бетонные работы</td></tr>
-        <tr><td><b style="color:#fff">Песок (с доставкой по НСО)</b></td><td>м³</td><td>от 850</td><td>Основания, отсыпка, благоустройство</td></tr>
-        <tr><td><b style="color:#fff">Асфальтная крошка</b></td><td>тонна</td><td>от 1 200</td><td>Подъездные пути, временное покрытие</td></tr>
-      </tbody>
-    </table>
-    <div class="callout">Все материалы соответствуют действующим ГОСТ. На каждую партию смеси оформляется паспорт качества с результатами лабораторных испытаний.</div>
-  </div>
-</section>
- 
-<section class="section" style="background:var(--bg-2)">
-  <div class="container">
-    <span class="eyebrow">Дорожные работы</span>
-    <h2 class="h2">Что мы строим и ремонтируем</h2>
-    <p class="lead">Берёмся как за крупные объекты под государственный контракт, так и за частные заказы: дворы, парковки, подъезды к предприятиям.</p>
-    <div class="grid-3" style="margin-top:26px">
-      <div class="card">
-        <div class="card__icon">01</div>
-        <div class="card__title">Асфальтирование под ключ</div>
-        <div class="card__text">Геодезия, планировка, устройство основания, укладка асфальтобетонной смеси в 1 или 2 слоя, уплотнение, бортовой камень. От 500 ₽/м².</div>
+    <div class="multi-calculator">
+      <h2>Калькулятор полной сметы</h2>
+
+      <div class="footnote-box">
+        Работы: песок — 85 ₽/м² за каждые 100 мм, ЩПС — 60 ₽/м² за каждые 100 мм, асфальт — 450 ₽/м²<br>
+        Доставка: до 30 км — 300 ₽/т | 30–40 км — 350 ₽/т | 40–50 км — 400 ₽/т
       </div>
-      <div class="card">
-        <div class="card__icon">02</div>
-        <div class="card__title">Ремонт дорог</div>
-        <div class="card__text">Ремонт картами, ямочный ремонт, фрезерование старого покрытия, заливка швов, устранение деформаций и повреждений. От 850 ₽/м².</div>
+
+      <p class="note">Введите данные • расчёт обновляется автоматически</p>
+
+      <div class="delivery-block">
+        <div class="input-group">
+          <label>Расстояние доставки, км</label>
+          <input type="number" id="distance" placeholder="Например: 25" min="0" step="1" data-next="area_p">
+        </div>
       </div>
-      <div class="card">
-        <div class="card__icon">03</div>
-        <div class="card__title">Строительство дорог</div>
-        <div class="card__text">Устройство земляного полотна, водоотводных канав и труб, оснований из ЩПС и щебня, нижнего и верхнего слоёв асфальтобетонного покрытия.</div>
+
+      <div class="layer">
+        <h3>1. Песок (плотность 1,8 т/м³)</h3>
+        <div class="inputs">
+          <div class="input-group">
+            <label>Площадь, м²</label>
+            <input type="number" id="area_p" placeholder="0" min="0" step="0.01" data-next="thick_p">
+          </div>
+          <div class="input-group">
+            <label>Толщина, мм</label>
+            <input type="number" id="thick_p" placeholder="0" min="0" step="1" data-next="type_p">
+          </div>
+          <div class="input-group">
+            <label>Тип песка</label>
+            <select id="type_p" data-next="area_s">
+              <option value="750">Мелкий — 750 ₽/т</option>
+              <option value="800" selected>Средний — 800 ₽/т</option>
+              <option value="850">Крупный — 850 ₽/т</option>
+            </select>
+          </div>
+        </div>
       </div>
-      <div class="card">
-        <div class="card__icon">04</div>
-        <div class="card__title">Благоустройство</div>
-        <div class="card__text">Дворы, площадки, парковки, тротуары. Устройство бортового камня, асфальтобетонного покрытия, организация поверхностного водоотвода. От 1 200 ₽/м².</div>
+
+      <div class="layer">
+        <h3>2. ЩПС (плотность 2,1 т/м³)</h3>
+        <div class="inputs">
+          <div class="input-group">
+            <label>Площадь, м²</label>
+            <input type="number" id="area_s" placeholder="0" min="0" step="0.01" data-next="thick_s">
+          </div>
+          <div class="input-group">
+            <label>Толщина, мм</label>
+            <input type="number" id="thick_s" placeholder="0" min="0" step="1" data-next="type_s">
+          </div>
+          <div class="input-group">
+            <label>Тип ЩПС</label>
+            <select id="type_s" data-next="area_a">
+              <option value="1300">ЩПС 0-40 — 1300 ₽/т</option>
+              <option value="1300" selected>ЩПС 0-80 — 1300 ₽/т</option>
+              <option value="1100">ЩПС 0-16 — 1100 ₽/т</option>
+            </select>
+          </div>
+        </div>
       </div>
-      <div class="card">
-        <div class="card__icon">05</div>
-        <div class="card__title">Устройство ЩПС-покрытий</div>
-        <div class="card__text">Подъездные пути, временные дороги, технологические площадки. Доступная альтернатива асфальтированию для объектов с низкой нагрузкой.</div>
+
+      <div class="layer">
+        <h3>3. Асфальт (плотность 2,6 т/м³)</h3>
+        <div class="inputs">
+          <div class="input-group">
+            <label>Площадь, м²</label>
+            <input type="number" id="area_a" placeholder="0" min="0" step="0.01" data-next="thick_a">
+          </div>
+          <div class="input-group">
+            <label>Толщина, мм</label>
+            <input type="number" id="thick_a" placeholder="0" min="0" step="1" data-next="material_a">
+          </div>
+          <div class="input-group">
+            <label>Тип асфальта</label>
+            <select id="material_a" data-next="distance">
+              <optgroup label="Асфальтобетонные смеси">
+                <option value="5246.28">АI — 5246,28</option>
+                <option value="4977.96">АII — 4977,96</option>
+                <option value="5001.36">БI — 5001,36</option>
+                <option value="5001.36" selected>БII — 5001,36</option>
+                <option value="5085.6">ВII — 5085,60</option>
+                <option value="5360.16">ГI — 5360,16</option>
+                <option value="5464.68">Г10% — 5464,68</option>
+                <option value="5464.68">Г15% — 5464,68</option>
+                <option value="5449.08">Г20% — 5449,08</option>
+                <option value="5327.4">ГII — 5327,40</option>
+              </optgroup>
+              <optgroup label="ЩМА и специальные">
+                <option value="6052.8">ЩМА-15 — 6052,80</option>
+                <option value="6377.28">ЩМА-16 на ПБВ — 6377,28</option>
+                <option value="6868.68">ЩМА-20 на ПБВ — 6868,68</option>
+                <option value="8129.4">SMA-16 — 8129,40</option>
+                <option value="6862.56">SMA-22 — 6862,56</option>
+              </optgroup>
+              <optgroup label="Смеси на КЗ и остальные">
+                <option value="4528.68">Б2КЗ — 4528,68</option>
+                <option value="4801.68">А2КЗ — 4801,68</option>
+                <option value="5380.44">А-5ВЛ — 5380,44</option>
+                <option value="5972.4">А8ВЛ — 5972,40</option>
+                <option value="5823">А11Вт — 5823,00</option>
+                <option value="5207.4">А 16-НН — 5207,40</option>
+                <option value="5275.8">А-16НТ — 5275,80</option>
+                <option value="5382">A 16-BH — 5382,00</option>
+                <option value="5549.4">А16-ВЛ — 5549,40</option>
+                <option value="5149.8">А22 ОТ — 5149,80</option>
+                <option value="5160.6">А22 НТ — 5160,60</option>
+                <option value="5038.2">А22НН — 5038,20</option>
+                <option value="5065.2">А32НТ — 5065,20</option>
+                <option value="5954.76">SP-32T — 5954,76</option>
+                <option value="6277.08">SP-22T — 6277,08</option>
+                <option value="6499.44">SP 16 H — 6499,44</option>
+                <option value="7552.08">SP 4L — 7552,08</option>
+                <option value="7213.44">SP 8L — 7213,44</option>
+                <option value="4852.8">пористый к/з -I — 4852,80</option>
+                <option value="4852.8">пористый к/з -2 — 4852,80</option>
+                <option value="5923.8">пористый м/з -I — 5923,80</option>
+                <option value="5947.2">пористый м/з -II — 5947,20</option>
+                <option value="4852.8">высокопор.к/з -I — 4852,80</option>
+                <option value="4059">черн.щебень 20-40 — 4059,00</option>
+                <option value="6431.4">БМО тип2 — 6431,40</option>
+                <option value="40063.92">ЭБДК-Б — 40063,92</option>
+              </optgroup>
+            </select>
+          </div>
+        </div>
       </div>
-      <div class="card">
-        <div class="card__icon">06</div>
-        <div class="card__title">Уборка дорожного полотна</div>
-        <div class="card__text">Очистка покрытий от пыли, мусора, снега и наледи. Содержание дорог в межсезонье в рамках контрактов.</div>
+
+      <div class="total-block">
+        <div class="table-wrapper">
+          <table class="smeta-table">
+            <thead>
+              <tr>
+                <th>Материал / Работы / Доставка</th>
+                <th>Площадь, м²</th>
+                <th>Толщина / Расстояние</th>
+                <th>Вес, т</th>
+                <th>Цена за ед., ₽</th>
+                <th>Стоимость, ₽</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><b id="name_p">Песок (Средний)</b></td><td id="area_p_show">0</td><td id="thick_p_show">0</td><td id="ton_p">0,00</td><td id="price_p">800</td><td id="cost_p">0 ₽</td></tr>
+              <tr><td><b id="name_s">ЩПС 0-80</b></td><td id="area_s_show">0</td><td id="thick_s_show">0</td><td id="ton_s">0,00</td><td id="price_s">1300</td><td id="cost_s">0 ₽</td></tr>
+              <tr><td><b id="name_a">БII</b></td><td id="area_a_show">0</td><td id="thick_a_show">0</td><td id="ton_a">0,00</td><td id="price_a">5001,36</td><td id="cost_a">0 ₽</td></tr>
+              <tr><td><b>Работы по песку</b></td><td id="area_p_works">0</td><td id="thick_p_works">0</td><td>—</td><td id="rate_p">0 ₽/м²</td><td id="works_p">0 ₽</td></tr>
+              <tr><td><b>Работы по ЩПС</b></td><td id="area_s_works">0</td><td id="thick_s_works">0</td><td>—</td><td id="rate_s">0 ₽/м²</td><td id="works_s">0 ₽</td></tr>
+              <tr><td><b>Работы по асфальту</b></td><td id="area_a_works">0</td><td id="thick_a_works">0</td><td>—</td><td id="rate_a">450 ₽/м²</td><td id="works_a">0 ₽</td></tr>
+              <tr><td><b>Доставка</b></td><td id="total_area_delivery">—</td><td id="distance_show">0 км</td><td id="total_ton_delivery">0,00</td><td id="rate_delivery">300 ₽/т</td><td id="cost_delivery">0 ₽</td></tr>
+              <tr class="subtotal"><td colspan="5"><strong>Итого стоимость работ</strong></td><td><strong id="total_works">0 ₽</strong></td></tr>
+              <tr class="total-row"><td colspan="5"><strong>ИТОГО ЗА ВЕСЬ ОБЪЕКТ</strong></td><td><strong id="total_all">0 ₽</strong></td></tr>
+              <tr class="total-row"><td colspan="5"><strong>ЦЕНА ЗА 1 м²</strong></td><td><strong id="per_m2">0 ₽</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div style="margin-top:28px;display:flex;flex-wrap:wrap;gap:12px;justify-content:center">
+        <a class="btn btn--primary" href="contacts.html">Оставить заявку на точный расчёт</a>
+        <a class="btn btn--ghost" href="tel:+73833110202">+7 (383) 311-02-02</a>
       </div>
     </div>
   </div>
 </section>
- 
-<section class="section">
-  <div class="container">
-    <span class="eyebrow">Технология</span>
-    <h2 class="h2">Как мы работаем по объекту</h2>
-    <div class="grid-4" style="margin-top:22px">
-      <div class="card"><div class="card__icon">1</div><div class="card__title">Выезд и обмер</div><div class="card__text">Замер площади, оценка состояния основания, согласование объёмов и сроков.</div></div>
-      <div class="card"><div class="card__icon">2</div><div class="card__title">Смета и договор</div><div class="card__text">Прозрачный расчёт по позициям, фиксация цены и сроков, гарантийные обязательства.</div></div>
-      <div class="card"><div class="card__icon">3</div><div class="card__title">Подготовка</div><div class="card__text">Демонтаж старого покрытия, геодезия, планировка, устройство основания.</div></div>
-      <div class="card"><div class="card__icon">4</div><div class="card__title">Укладка и сдача</div><div class="card__text">Укладка асфальта, уплотнение, контроль качества, сдача объекта по акту.</div></div>
-    </div>
-  </div>
-</section>
- 
-<section class="cta-strip">
-  <div class="container cta-strip__inner">
-    <div class="cta-strip__h">Нужен асфальт, материалы или работы под ключ?<br>Подготовим расчёт в течение рабочего дня.</div>
-    <div class="cta-strip__ctas">
-      <a class="btn btn--primary" href="contacts.html">Оставить заявку</a>
-      <a class="btn btn--ghost" href="calculator.html">Калькулятор</a>
-    </div>
-  </div>
-</section>
+
+<style>
+  .multi-calculator{
+    background:linear-gradient(180deg,rgba(54,58,65,.45) 0%,rgba(35,38,43,.85) 100%);
+    border:1px solid var(--line);
+    border-radius:var(--radius-lg);
+    padding:32px;
+    color:var(--text);
+  }
+  .multi-calculator h2{
+    color:#fff;font-size:28px;font-weight:800;margin-bottom:18px;letter-spacing:-.01em;
+  }
+  .multi-calculator h3{
+    color:#fff;font-size:18px;font-weight:700;margin-bottom:14px;
+  }
+  .multi-calculator .note{
+    text-align:center;color:var(--text-3);margin-bottom:20px;font-size:14px;
+  }
+  .multi-calculator .footnote-box{
+    background:rgba(255,61,0,.08);
+    border:1px solid rgba(255,61,0,.25);
+    border-left:3px solid var(--orange);
+    color:var(--text-2);
+    padding:14px 18px;border-radius:8px;
+    text-align:left;font-size:14px;line-height:1.55;
+    margin-bottom:18px;
+  }
+  .multi-calculator .delivery-block{
+    background:rgba(255,61,0,.06);
+    border:1px solid rgba(255,61,0,.18);
+    border-radius:10px;
+    padding:18px;
+    margin-bottom:18px;
+  }
+  .multi-calculator .layer{
+    background:rgba(20,22,26,.55);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:20px 22px;
+    margin-bottom:14px;
+  }
+  .multi-calculator .input-group{
+    display:flex;flex-direction:column;gap:6px;margin-bottom:12px;
+  }
+  .multi-calculator .input-group:last-child{margin-bottom:0}
+  .multi-calculator .input-group label{
+    color:var(--text-2);font-weight:600;font-size:13px;letter-spacing:.04em;
+  }
+  .multi-calculator .input-group input,
+  .multi-calculator .input-group select{
+    padding:12px 14px;font-size:15px;
+    background:#1a1c20;color:#fff;
+    border:1.5px solid var(--line);
+    border-radius:8px;
+    font-family:inherit;
+    transition:border-color .15s ease,background .15s ease,box-shadow .15s ease;
+  }
+  .multi-calculator .input-group input::placeholder{color:var(--text-3)}
+  .multi-calculator .input-group input:focus,
+  .multi-calculator .input-group select:focus{
+    outline:0;border-color:var(--orange);background:#171a1f;
+    box-shadow:0 0 0 3px rgba(255,61,0,.18);
+  }
+  .multi-calculator .inputs{display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:14px}
+  .multi-calculator .table-wrapper{
+    overflow-x:auto;-webkit-overflow-scrolling:touch;
+    margin-top:6px;
+    border-radius:10px;
+    border:1px solid var(--line);
+  }
+  .multi-calculator .smeta-table{
+    min-width:720px;width:100%;border-collapse:collapse;
+    background:rgba(20,22,26,.6);
+  }
+  .multi-calculator .smeta-table th,
+  .multi-calculator .smeta-table td{
+    padding:12px 10px;text-align:center;
+    border-bottom:1px solid var(--line);
+    font-size:14px;color:var(--text-2);
+  }
+  .multi-calculator .smeta-table th{
+    background:rgba(255,61,0,.12);color:#fff;font-weight:700;
+    letter-spacing:.04em;text-transform:uppercase;font-size:12px;
+  }
+  .multi-calculator .smeta-table td b{color:#fff;font-weight:700}
+  .multi-calculator .smeta-table .subtotal{background:rgba(255,255,255,.04)}
+  .multi-calculator .smeta-table .subtotal strong{color:#fff}
+  .multi-calculator .smeta-table .total-row{
+    background:linear-gradient(90deg,var(--orange),var(--orange-2));
+    color:#fff;font-size:15px;
+  }
+  .multi-calculator .smeta-table .total-row td{
+    color:#fff;border-bottom-color:rgba(255,255,255,.18);
+  }
+  .multi-calculator .smeta-table .total-row strong{color:#fff;font-size:16px}
+  @media (max-width:720px){
+    .multi-calculator{padding:20px}
+    .multi-calculator .inputs{grid-template-columns:1fr}
+    .multi-calculator .footnote-box{font-size:13px}
+    .multi-calculator .smeta-table th,
+    .multi-calculator .smeta-table td{padding:10px 8px;font-size:13px}
+    .multi-calculator .input-group input,
+    .multi-calculator .input-group select{font-size:16px}
+  }
+</style>
+
+<script>
+(function(){
+  var root=document.querySelector('.multi-calculator');
+  if(!root)return;
+  var cache={};
+  var fieldIds=['area_p','thick_p','type_p','area_s','thick_s','type_s','area_a','thick_a','material_a','distance'];
+
+  function formatNum(n){return parseInt(n).toLocaleString('ru-RU');}
+  function fmtDec(n,d){return parseFloat(n).toFixed(d==null?2:d);}
+
+  function recalc(){
+    var vals={};
+    fieldIds.forEach(function(id){
+      vals[id]=parseFloat(document.getElementById(id).value)||0;
+    });
+
+    var ap=vals.area_p, tp=vals.thick_p, pp=vals.type_p;
+    var as=vals.area_s, ts=vals.thick_s, ps=vals.type_s;
+    var aa=vals.area_a, ta=vals.thick_a, pa=vals.material_a;
+    var dist=vals.distance;
+
+    var selP=document.getElementById('type_p');
+    var selS=document.getElementById('type_s');
+    var selA=document.getElementById('material_a');
+    var nameP=selP.options[selP.selectedIndex].text.split(' — ')[0];
+    var nameS=selS.options[selS.selectedIndex].text.split(' — ')[0];
+    var nameA=selA.options[selA.selectedIndex].text.split(' — ')[0];
+
+    var ton_p=fmtDec(ap*(tp/1000)*1.8);
+    var cost_p=formatNum(parseFloat(ton_p)*pp);
+    var ton_s=fmtDec(as*(ts/1000)*2.1);
+    var cost_s=formatNum(parseFloat(ton_s)*ps);
+    var ton_a=fmtDec(aa*(ta/1000)*2.6);
+    var cost_a=formatNum(parseFloat(ton_a)*pa);
+
+    var rate_p=(Math.ceil(tp/100)||0)*85;
+    var works_p=formatNum(ap*rate_p);
+    var rate_s=(Math.ceil(ts/100)||0)*60;
+    var works_s=formatNum(as*rate_s);
+    var works_a=formatNum(aa*450);
+    function n(s){return parseInt(String(s).replace(/\s/g,''))||0;}
+    var total_works=formatNum(n(works_p)+n(works_s)+n(works_a));
+
+    var total_tons=parseFloat(ton_p)+parseFloat(ton_s)+parseFloat(ton_a);
+    var delivery_rate=dist>40?400:dist>30?350:300;
+    var cost_delivery=formatNum(total_tons*delivery_rate);
+
+    var grand_total=n(cost_p)+n(cost_s)+n(cost_a)+n(total_works)+n(cost_delivery);
+    var maxArea=Math.max(ap,as,aa);
+    var per_m2=formatNum(maxArea>0?grand_total/maxArea:0);
+
+    var updates={
+      name_p:'Песок ('+nameP+')',
+      area_p_show:ap,
+      thick_p_show:tp,
+      ton_p:ton_p,
+      price_p:pp,
+      cost_p:cost_p+' ₽',
+      name_s:nameS,
+      area_s_show:as,
+      thick_s_show:ts,
+      ton_s:ton_s,
+      price_s:ps,
+      cost_s:cost_s+' ₽',
+      name_a:nameA,
+      area_a_show:aa,
+      thick_a_show:ta,
+      ton_a:ton_a,
+      price_a:parseFloat(pa).toFixed(2),
+      cost_a:cost_a+' ₽',
+      area_p_works:ap,
+      thick_p_works:tp,
+      rate_p:rate_p+' ₽/м²',
+      works_p:works_p+' ₽',
+      area_s_works:as,
+      thick_s_works:ts,
+      rate_s:rate_s+' ₽/м²',
+      works_s:works_s+' ₽',
+      area_a_works:aa,
+      thick_a_works:ta,
+      works_a:works_a+' ₽',
+      total_works:total_works+' ₽',
+      distance_show:dist+' км',
+      total_ton_delivery:fmtDec(total_tons),
+      rate_delivery:delivery_rate+' ₽/т',
+      cost_delivery:cost_delivery+' ₽',
+      total_all:formatNum(grand_total)+' ₽',
+      per_m2:per_m2+' ₽'
+    };
+
+    Object.keys(updates).forEach(function(id){
+      var val=updates[id];
+      if(cache[id]!==val){
+        var el=document.getElementById(id);
+        if(el){el.textContent=val;cache[id]=val;}
+      }
+    });
+  }
+
+  root.querySelectorAll('input, select').forEach(function(el){
+    el.addEventListener('input',recalc);
+    el.addEventListener('change',recalc);
+    el.addEventListener('keydown',function(e){
+      if(e.key==='Enter'){
+        var nextId=el.getAttribute('data-next');
+        if(nextId){
+          e.preventDefault();
+          var n=document.getElementById(nextId);
+          if(n)n.focus();
+        }
+      }
+    });
+  });
+
+  recalc();
+})();
+</script>

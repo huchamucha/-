@@ -1,0 +1,503 @@
+<!-- ======================================================================
+     КА-СТРОЙ — главная страница (HTML-вставка для конструктора Рег.ру)
+     v3: full-bleed (на всю ширину окна), без своего верхнего меню,
+     логотипный оранжевый #FF3D00, асфальтовый фон.
+     ====================================================================== -->
+<div class="ks-root">
+<style>
+  /* Full-bleed: блок вырывается из контейнера конструктора на всю ширину окна */
+  .ks-root{position:relative;width:100vw;left:50%;right:50%;margin-left:-50vw;margin-right:-50vw;max-width:100vw;overflow-x:hidden;z-index:1}
+  /* Тёмная «крышка» сверху перекрывает любые остатки белого фона выше блока */
+  .ks-root::before{content:"";position:absolute;left:0;right:0;top:-400px;height:400px;background:var(--ks-bg);z-index:-1;pointer-events:none}
+  .ks-root{--ks-bg:#1a1c20;--ks-bg-2:#23262b;--ks-bg-3:#2c2f35;--ks-bg-4:#363a41;--ks-line:#3a3f48;--ks-line-2:#454a54;--ks-text:#eef0f3;--ks-text-2:#c4c8cf;--ks-text-3:#8a8f98;--ks-orange:#ff3d00;--ks-orange-2:#ff6534;--ks-orange-3:#ff8a5c;--ks-white:#ffffff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--ks-text);line-height:1.55;font-size:16px;-webkit-font-smoothing:antialiased;background:var(--ks-bg)}
+  .ks-root *,.ks-root *::before,.ks-root *::after{box-sizing:border-box}
+  .ks-root h1,.ks-root h2,.ks-root h3,.ks-root h4,.ks-root p,.ks-root ul,.ks-root li{margin:0;padding:0;list-style:none}
+  .ks-root a{color:inherit;text-decoration:none}
+  .ks-root button,.ks-root input,.ks-root select,.ks-root textarea{font-family:inherit}
+  .ks-root button{cursor:pointer;border:0}
+  .ks-container{max-width:1180px;margin:0 auto;padding:0 20px}
+  .ks-section{padding:80px 0}
+  .ks-eyebrow{display:inline-block;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--ks-orange);font-weight:700;margin-bottom:14px}
+  .ks-h2{font-size:36px;font-weight:800;line-height:1.12;color:var(--ks-white);margin-bottom:14px;letter-spacing:-.01em}
+  .ks-lead{font-size:17px;color:var(--ks-text-2);max-width:780px;margin-bottom:36px;line-height:1.55}
+  .ks-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 26px;border-radius:8px;font-weight:700;font-size:15px;letter-spacing:.01em;transition:transform .15s ease,box-shadow .15s ease,background .15s ease,border-color .15s ease}
+  .ks-btn--primary{background:var(--ks-orange);color:#fff;box-shadow:0 8px 20px rgba(255,61,0,.32)}
+  .ks-btn--primary:hover{background:var(--ks-orange-2);transform:translateY(-1px);box-shadow:0 12px 24px rgba(255,61,0,.38)}
+  .ks-btn--ghost{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.25)}
+  .ks-btn--ghost:hover{border-color:var(--ks-orange);color:var(--ks-orange-2)}
+ 
+  /* ===== NAV ===== */
+  .ks-nav{background:#15171b;border-bottom:1px solid var(--ks-line);position:relative;z-index:5}
+  .ks-nav-inner{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:14px 0}
+  .ks-nav-brand{display:flex;align-items:center;gap:12px;font-weight:900;font-size:18px;letter-spacing:.04em;color:#fff;white-space:nowrap}
+  .ks-nav-brand b{color:var(--ks-orange)}
+  .ks-nav-mark{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#1f2227 0%,#363a41 100%);position:relative;overflow:hidden;border:1px solid var(--ks-line-2);flex-shrink:0}
+  .ks-nav-mark::before{content:"";position:absolute;left:14%;bottom:18%;width:72%;height:3px;background:var(--ks-orange);transform:rotate(-18deg);box-shadow:0 -6px 0 -1px rgba(255,255,255,.18),0 -10px 0 -2px rgba(255,255,255,.1)}
+  .ks-nav-list{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .ks-nav-list a{padding:8px 12px;border-radius:6px;font-size:14px;font-weight:600;color:var(--ks-text-2);transition:color .15s ease,background .15s ease}
+  .ks-nav-list a:hover{color:#fff;background:rgba(255,255,255,.05)}
+  .ks-nav-list a.ks-nav-cta{background:var(--ks-orange);color:#fff;padding:10px 16px}
+  .ks-nav-list a.ks-nav-cta:hover{background:var(--ks-orange-2);color:#fff}
+ 
+  /* ===== HERO ===== */
+  .ks-hero{position:relative;background:radial-gradient(circle at 70% 30%,#2f343c 0%,#1a1c20 60%);color:#fff;overflow:hidden}
+  .ks-hero::before{content:"";position:absolute;inset:0;background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.022) 0 2px,transparent 2px 14px);pointer-events:none}
+  .ks-hero::after{content:"";position:absolute;right:-160px;top:-160px;width:560px;height:560px;border-radius:50%;background:radial-gradient(circle,rgba(255,61,0,.22),rgba(255,61,0,0) 70%);pointer-events:none}
+  .ks-hero-inner{position:relative;padding:96px 0 88px;display:grid;grid-template-columns:1.2fr 1fr;gap:48px;align-items:center}
+  .ks-hero-badge{display:inline-flex;align-items:center;gap:10px;background:rgba(255,61,0,.12);color:var(--ks-orange-3);font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase;padding:8px 14px;border-radius:999px;border:1px solid rgba(255,61,0,.35);margin-bottom:22px}
+  .ks-hero-badge::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--ks-orange);box-shadow:0 0 0 4px rgba(255,61,0,.25)}
+  .ks-hero h1{font-size:68px;font-weight:900;letter-spacing:-.02em;line-height:.98;margin-bottom:20px;color:var(--ks-orange);text-shadow:0 0 60px rgba(255,61,0,.4)}
+  .ks-hero-motto{font-size:22px;font-weight:600;color:#fff;margin-bottom:16px;line-height:1.3;max-width:560px}
+  .ks-hero-motto em{font-style:normal;color:var(--ks-orange-3)}
+  .ks-hero-sub{font-size:16px;color:var(--ks-text-2);max-width:560px;margin-bottom:32px}
+  .ks-hero-ctas{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:36px}
+  .ks-hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:560px}
+  .ks-hero-stat{background:rgba(255,255,255,.03);border:1px solid var(--ks-line);border-radius:10px;padding:16px}
+  .ks-hero-stat-n{font-size:24px;font-weight:800;color:#fff;letter-spacing:-.01em}
+  .ks-hero-stat-l{font-size:12px;color:var(--ks-text-3);text-transform:uppercase;letter-spacing:.12em;margin-top:4px}
+  .ks-hero-visual{position:relative;display:flex;justify-content:center;align-items:center;min-height:380px}
+  .ks-hero-card{position:relative;width:100%;max-width:420px;background:linear-gradient(160deg,#23262b 0%,#15171b 100%);border:1px solid var(--ks-line);border-radius:18px;padding:28px;box-shadow:0 30px 60px rgba(0,0,0,.5)}
+  .ks-hero-card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+  .ks-hero-card-title{font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--ks-text-3)}
+  .ks-hero-card-dot{width:10px;height:10px;border-radius:50%;background:var(--ks-orange);box-shadow:0 0 0 4px rgba(255,61,0,.22)}
+  .ks-hero-list{display:flex;flex-direction:column;gap:14px}
+  .ks-hero-list-item{display:flex;justify-content:space-between;align-items:baseline;padding-bottom:14px;border-bottom:1px dashed var(--ks-line-2)}
+  .ks-hero-list-item:last-child{border:0;padding-bottom:0}
+  .ks-hero-list-item-name{color:var(--ks-text);font-weight:600;font-size:15px}
+  .ks-hero-list-item-price{color:var(--ks-orange-2);font-weight:800;font-size:18px;white-space:nowrap}
+ 
+  /* ===== HOT OFFERS ===== */
+  .ks-hot{background:var(--ks-bg-2)}
+  .ks-hot-head{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:20px;margin-bottom:36px}
+  .ks-hot-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .ks-offer{position:relative;background:var(--ks-bg-3);border:1px solid var(--ks-line);border-radius:14px;padding:28px;overflow:hidden;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+  .ks-offer:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,.4);border-color:var(--ks-orange)}
+  .ks-offer::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--ks-orange) 0%,var(--ks-orange-2) 100%)}
+  .ks-offer-tag{display:inline-block;background:rgba(255,61,0,.14);color:var(--ks-orange-3);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:6px 12px;border-radius:999px;margin-bottom:18px;border:1px solid rgba(255,61,0,.25)}
+  .ks-offer-title{font-size:21px;font-weight:800;color:#fff;margin-bottom:12px;line-height:1.25}
+  .ks-offer-text{color:var(--ks-text-2);font-size:15px;margin-bottom:22px}
+  .ks-offer-price{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
+  .ks-offer-price-n{font-size:34px;font-weight:900;color:#fff;letter-spacing:-.01em}
+  .ks-offer-price-u{font-size:14px;color:var(--ks-text-3);font-weight:600}
+  .ks-offer-meta{font-size:13px;color:var(--ks-text-3);margin-bottom:20px}
+  .ks-offer-code{display:inline-flex;align-items:center;gap:8px;background:#0d0f12;color:#fff;font-family:"Menlo",ui-monospace,monospace;font-size:14px;font-weight:700;padding:10px 14px;border-radius:6px;letter-spacing:.06em;border:1px solid var(--ks-line)}
+  .ks-offer-code b{color:var(--ks-orange-2)}
+ 
+  /* ===== ABOUT ===== */
+  .ks-about{background:var(--ks-bg)}
+  .ks-about-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:56px;align-items:center}
+  .ks-about-text p{margin-bottom:16px;color:var(--ks-text-2);font-size:16px}
+  .ks-about-text p:last-child{margin-bottom:0}
+  .ks-about-points{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:28px}
+  .ks-about-point{background:var(--ks-bg-3);border:1px solid var(--ks-line);border-radius:12px;padding:18px}
+  .ks-about-point-n{font-size:26px;font-weight:900;color:var(--ks-orange-2);line-height:1;margin-bottom:8px}
+  .ks-about-point-l{font-size:14px;color:var(--ks-text);font-weight:600;line-height:1.35}
+  .ks-about-visual{position:relative;border-radius:18px;overflow:hidden;background:linear-gradient(160deg,#23262b 0%,#0d0f12 100%);min-height:440px;padding:36px;display:flex;flex-direction:column;justify-content:flex-end;color:#fff;box-shadow:0 24px 50px rgba(0,0,0,.35);border:1px solid var(--ks-line)}
+  .ks-about-visual::before{content:"";position:absolute;inset:0;background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.03) 0 2px,transparent 2px 16px);pointer-events:none}
+  .ks-about-visual::after{content:"";position:absolute;right:-100px;bottom:-100px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(255,61,0,.28),rgba(255,61,0,0) 70%);pointer-events:none}
+  .ks-about-visual-tag{position:relative;display:inline-block;background:var(--ks-orange);color:#fff;font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;padding:6px 14px;border-radius:999px;margin-bottom:18px;align-self:flex-start}
+  .ks-about-visual-title{position:relative;font-size:28px;font-weight:800;line-height:1.18;margin-bottom:10px}
+  .ks-about-visual-sub{position:relative;color:var(--ks-text-2);font-size:15px;max-width:380px}
+ 
+  /* ===== SERVICES ===== */
+  .ks-services{background:var(--ks-bg-2)}
+  .ks-svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .ks-svc{position:relative;background:var(--ks-bg-3);border:1px solid var(--ks-line);border-radius:14px;padding:26px;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;display:flex;flex-direction:column}
+  .ks-svc:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,.4);border-color:var(--ks-orange)}
+  .ks-svc-ico{width:50px;height:50px;border-radius:12px;background:linear-gradient(135deg,var(--ks-orange) 0%,var(--ks-orange-2) 100%);display:flex;align-items:center;justify-content:center;margin-bottom:18px;box-shadow:0 8px 16px rgba(255,61,0,.3)}
+  .ks-svc-ico svg{width:26px;height:26px;fill:#fff}
+  .ks-svc-title{font-size:19px;font-weight:800;color:#fff;margin-bottom:10px;line-height:1.25}
+  .ks-svc-text{color:var(--ks-text-2);font-size:14.5px;line-height:1.5;margin-bottom:16px;flex-grow:1}
+  .ks-svc-link{display:inline-flex;align-items:center;gap:6px;color:var(--ks-orange-2);font-weight:700;font-size:14px;letter-spacing:.02em;align-self:flex-start;transition:gap .15s ease,color .15s ease}
+  .ks-svc-link:hover{gap:10px;color:var(--ks-orange-3)}
+  .ks-svc-link::after{content:"\2192";font-weight:400}
+ 
+  /* ===== FORM ===== */
+  .ks-form-section{background:var(--ks-bg)}
+  .ks-form-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:48px;align-items:center}
+  .ks-form-info p{color:var(--ks-text-2);font-size:16px;margin-bottom:14px}
+  .ks-form-info p:last-child{margin-bottom:0}
+  .ks-form-contacts{margin-top:28px;display:flex;flex-direction:column;gap:10px}
+  .ks-form-contact{display:flex;align-items:center;gap:12px;color:var(--ks-text);font-size:15px}
+  .ks-form-contact b{display:block;font-size:11px;color:var(--ks-text-3);letter-spacing:.12em;text-transform:uppercase;font-weight:700;margin-bottom:2px}
+  .ks-form-contact a{color:#fff;font-weight:600}
+  .ks-form-contact a:hover{color:var(--ks-orange-2)}
+  .ks-form-contact-ico{width:36px;height:36px;border-radius:8px;background:rgba(255,61,0,.12);border:1px solid rgba(255,61,0,.25);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .ks-form-contact-ico svg{width:18px;height:18px;fill:var(--ks-orange-2)}
+  .ks-form-wrap{background:var(--ks-bg-3);border:1px solid var(--ks-line);border-radius:18px;padding:34px;box-shadow:0 24px 50px rgba(0,0,0,.35)}
+  .ks-form-title{font-size:24px;font-weight:800;color:#fff;text-align:center;margin-bottom:8px}
+  .ks-form-sub{font-size:14px;color:var(--ks-text-3);text-align:center;margin-bottom:24px}
+  .ks-form-field{margin-bottom:14px}
+  .ks-form-field input{width:100%;background:var(--ks-bg-4);border:1px solid var(--ks-line-2);border-radius:10px;color:#fff;font-size:15px;font-weight:500;padding:14px 16px;outline:none;transition:border-color .15s ease,background .15s ease}
+  .ks-form-field input::placeholder{color:var(--ks-text-3)}
+  .ks-form-field input:focus{border-color:var(--ks-orange);background:#3d4148}
+  .ks-form-checks-title{font-size:14px;color:var(--ks-text-2);margin:18px 0 10px;font-weight:600}
+  .ks-form-checks{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+  .ks-form-check{display:flex;align-items:center;gap:10px;background:var(--ks-bg-4);border:1px solid var(--ks-line-2);border-radius:10px;padding:12px 14px;cursor:pointer;transition:border-color .15s ease,background .15s ease}
+  .ks-form-check:hover{border-color:var(--ks-orange);background:#3d4148}
+  .ks-form-check input{appearance:none;-webkit-appearance:none;width:18px;height:18px;border:2px solid var(--ks-line-2);border-radius:4px;cursor:pointer;flex-shrink:0;position:relative;transition:border-color .15s ease,background .15s ease}
+  .ks-form-check input:checked{background:var(--ks-orange);border-color:var(--ks-orange)}
+  .ks-form-check input:checked::after{content:"";position:absolute;left:4px;top:0;width:6px;height:11px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+  .ks-form-check span{color:#fff;font-size:14.5px;font-weight:500}
+  .ks-form-submit{width:100%;background:var(--ks-orange);color:#fff;font-weight:800;font-size:16px;letter-spacing:.02em;padding:16px;border-radius:10px;transition:background .15s ease,box-shadow .15s ease;box-shadow:0 10px 24px rgba(255,61,0,.32)}
+  .ks-form-submit:hover{background:var(--ks-orange-2);box-shadow:0 14px 28px rgba(255,61,0,.4)}
+  .ks-form-foot{margin-top:12px;font-size:12px;color:var(--ks-text-3);text-align:center;line-height:1.5}
+  .ks-form-status{display:none;margin-top:14px;padding:14px 16px;border-radius:10px;font-size:14px;line-height:1.45;text-align:center;font-weight:600}
+  .ks-form-status.is-ok{display:block;background:rgba(16,185,129,.12);color:#34d399;border:1px solid rgba(16,185,129,.35)}
+  .ks-form-status.is-err{display:block;background:rgba(255,61,0,.12);color:var(--ks-orange-2);border:1px solid rgba(255,61,0,.4)}
+  .ks-form-submit[disabled]{opacity:.7;cursor:wait}
+  .ks-form-honey{position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;opacity:0}
+ 
+  /* ===== CTA STRIP ===== */
+  .ks-cta{background:linear-gradient(135deg,var(--ks-orange) 0%,#e62e00 100%);color:#fff;text-align:center;padding:56px 0;position:relative;overflow:hidden}
+  .ks-cta::before{content:"";position:absolute;inset:0;background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.05) 0 2px,transparent 2px 14px);pointer-events:none}
+  .ks-cta-inner{position:relative}
+  .ks-cta h2{font-size:32px;font-weight:900;margin-bottom:12px;letter-spacing:-.01em;color:#fff}
+  .ks-cta p{font-size:17px;opacity:.92;margin-bottom:24px;max-width:640px;margin-left:auto;margin-right:auto}
+  .ks-cta-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .ks-cta .ks-btn{padding:16px 32px;font-size:16px}
+  .ks-cta .ks-btn--dark{background:#15171b;color:#fff}
+  .ks-cta .ks-btn--dark:hover{background:#000}
+ 
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 980px){
+    .ks-section{padding:60px 0}
+    .ks-nav-inner{flex-direction:column;align-items:flex-start;gap:10px}
+    .ks-nav-list{justify-content:flex-start}
+    .ks-hero-inner{grid-template-columns:1fr;gap:36px;padding:64px 0 56px}
+    .ks-hero h1{font-size:52px}
+    .ks-hero-motto{font-size:19px}
+    .ks-hot-grid{grid-template-columns:1fr}
+    .ks-about-grid{grid-template-columns:1fr;gap:36px}
+    .ks-about-visual{min-height:280px}
+    .ks-svc-grid{grid-template-columns:repeat(2,1fr)}
+    .ks-form-grid{grid-template-columns:1fr;gap:32px}
+    .ks-h2{font-size:28px}
+  }
+  @media (max-width: 600px){
+    .ks-hero h1{font-size:42px}
+    .ks-hero-stats{grid-template-columns:1fr 1fr}
+    .ks-hero-stat-n{font-size:20px}
+    .ks-svc-grid{grid-template-columns:1fr}
+    .ks-hot-head{flex-direction:column;align-items:flex-start}
+    .ks-cta h2{font-size:24px}
+    .ks-form-wrap{padding:24px}
+    .ks-nav-list{gap:2px}
+    .ks-nav-list a{padding:6px 10px;font-size:13px}
+  }
+</style>
+ 
+<!-- ===== БЛОК 1: HERO ===== -->
+<section class="ks-hero">
+  <div class="ks-container ks-hero-inner">
+    <div class="ks-hero-text">
+      <div class="ks-hero-badge">Дорожное строительство · Новосибирск</div>
+      <h1>КА–СТРОЙ</h1>
+      <div class="ks-hero-motto">«Надёжность в каждом километре, <em>качество в каждой тонне</em>.»</div>
+      <p class="ks-hero-sub">ООО ИСК «КА-Строй» — производим асфальтобетонные смеси, строим и ремонтируем дороги, благоустраиваем территории и сдаём в аренду спецтехнику по Новосибирску и области. Работаем с частными заказчиками, бизнесом и по 44-ФЗ/223-ФЗ.</p>
+      <div class="ks-hero-ctas">
+        <a class="ks-btn ks-btn--primary" href="#" data-ks-scroll="ks-form-section">Оставить заявку</a>
+        <a class="ks-btn ks-btn--ghost" href="/calculator">Калькулятор расчёта</a>
+      </div>
+      <div class="ks-hero-stats">
+        <div class="ks-hero-stat"><div class="ks-hero-stat-n">с 2020 г.</div><div class="ks-hero-stat-l">опыт работы</div></div>
+        <div class="ks-hero-stat"><div class="ks-hero-stat-n">АСОНО</div><div class="ks-hero-stat-l">член СРО, 44-ФЗ</div></div>
+        <div class="ks-hero-stat"><div class="ks-hero-stat-n">24/7</div><div class="ks-hero-stat-l">отгрузка в сезон</div></div>
+      </div>
+    </div>
+    <div class="ks-hero-visual">
+      <div class="ks-hero-card">
+        <div class="ks-hero-card-top">
+          <div class="ks-hero-card-title">Прайс сегодня</div>
+          <div class="ks-hero-card-dot"></div>
+        </div>
+        <div class="ks-hero-list">
+          <div class="ks-hero-list-item"><span class="ks-hero-list-item-name">Асфальт марка Б, тип II</span><span class="ks-hero-list-item-price">5 000 ₽/т</span></div>
+          <div class="ks-hero-list-item"><span class="ks-hero-list-item-name">ЩПС С5 (0–40 мм)</span><span class="ks-hero-list-item-price">от 850 ₽/т</span></div>
+          <div class="ks-hero-list-item"><span class="ks-hero-list-item-name">Песок строительный</span><span class="ks-hero-list-item-price">от 700 ₽/т</span></div>
+          <div class="ks-hero-list-item"><span class="ks-hero-list-item-name">Асфальтирование «под ключ»</span><span class="ks-hero-list-item-price">от 500 ₽/м²</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- ===== БЛОК 2: ГОРЯЧИЕ ПРЕДЛОЖЕНИЯ ===== -->
+<section class="ks-section ks-hot">
+  <div class="ks-container">
+    <div class="ks-hot-head">
+      <div>
+        <div class="ks-eyebrow">Акции сезона</div>
+        <h2 class="ks-h2">Горячие предложения</h2>
+        <p class="ks-lead">Цены, выгодные и крупному подрядчику, и владельцу частного двора. Действуют, пока на базе есть свободные объёмы.</p>
+      </div>
+    </div>
+    <div class="ks-hot-grid">
+      <div class="ks-offer">
+        <div class="ks-offer-tag">Хит сезона</div>
+        <div class="ks-offer-title">Асфальтовая смесь Б-II</div>
+        <p class="ks-offer-text">Плотная мелкозернистая смесь марки Б, тип II — оптимальна для дворовых проездов, парковок и второстепенных дорог. Соответствует ГОСТ 9128-2013.</p>
+        <div class="ks-offer-price"><span class="ks-offer-price-n">5 000 ₽</span><span class="ks-offer-price-u">/ тонна</span></div>
+        <div class="ks-offer-meta">Самовывоз с базы или доставка самосвалом 10–20 т</div>
+        <a class="ks-btn ks-btn--primary" href="tel:+79231504297" style="width:100%">Заказать смесь</a>
+      </div>
+      <div class="ks-offer">
+        <div class="ks-offer-tag">Скидка по промокоду</div>
+        <div class="ks-offer-title">Аренда спецтехники со скидкой</div>
+        <p class="ks-offer-text">Самосвалы, катки, виброплиты, асфальтоукладчики и автогрейдеры. С опытным машинистом и доставкой на объект в черте Новосибирска.</p>
+        <div class="ks-offer-price"><span class="ks-offer-price-n">−10%</span><span class="ks-offer-price-u">от прайса</span></div>
+        <div class="ks-offer-meta" style="margin-bottom:14px">Скажите менеджеру кодовое слово:</div>
+        <div class="ks-offer-code">Промокод: <b>САЙТ КА-СТРОЙ</b></div>
+      </div>
+      <div class="ks-offer">
+        <div class="ks-offer-tag">Под ключ</div>
+        <div class="ks-offer-title">Асфальтирование дорог</div>
+        <p class="ks-offer-text">Полный цикл: выезд инженера, подготовка основания, укладка асфальтобетона и финишное уплотнение катком. Гарантия на работы — до 3 лет.</p>
+        <div class="ks-offer-price"><span class="ks-offer-price-n">от 500 ₽</span><span class="ks-offer-price-u">/ м²</span></div>
+        <div class="ks-offer-meta">Цена включает материалы, технику и оплату труда</div>
+        <a class="ks-btn ks-btn--primary" href="/calculator" style="width:100%">Рассчитать объём</a>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- ===== БЛОК 3: О КОМПАНИИ ===== -->
+<section class="ks-section ks-about">
+  <div class="ks-container">
+    <div class="ks-about-grid">
+      <div class="ks-about-text">
+        <div class="ks-eyebrow">О компании</div>
+        <h2 class="ks-h2">КА-Строй — дорожное строительство, на которое можно опереться</h2>
+        <p>ООО ИСК «КА-Строй» — новосибирская компания полного цикла, работаем на рынке дорожного строительства с 2020 года. Производим асфальтобетонные смеси на собственной базе, выполняем укладку и ремонт покрытий, благоустраиваем территории и продаём инертные материалы — ЩПС, песок и асфальт навалом.</p>
+        <p>Компания — член Ассоциации строительных организаций Новосибирской области (АСОНО, СРО-С-284-21062017). Имеем аккредитацию на электронных торговых площадках и работаем как по 44-ФЗ, так и по 223-ФЗ. Собственная производственная база с асфальтным заводом и парком техники позволяет сокращать сроки, держать честную цену и отвечать за качество на каждом этапе.</p>
+        <p>Одинаково ответственно подходим к асфальтированию двора на 60 м² и к участку дороги длиной в несколько километров. На каждый объект — прораб, на каждую партию смеси — паспорт качества, на выполненные работы — письменная гарантия.</p>
+        <a class="ks-svc-link" href="/about" style="margin-top:6px">Подробнее о компании</a>
+        <div class="ks-about-points">
+          <div class="ks-about-point"><div class="ks-about-point-n">Свой АБЗ</div><div class="ks-about-point-l">Производим смесь сами — без посредников</div></div>
+          <div class="ks-about-point"><div class="ks-about-point-n">ГОСТ</div><div class="ks-about-point-l">Лабораторный контроль каждой партии</div></div>
+          <div class="ks-about-point"><div class="ks-about-point-n">Гарантия</div><div class="ks-about-point-l">До 3 лет на дорожные работы</div></div>
+          <div class="ks-about-point"><div class="ks-about-point-n">44-ФЗ</div><div class="ks-about-point-l">Аккредитация на всех ЭТП, член СРО</div></div>
+        </div>
+      </div>
+      <div class="ks-about-visual">
+        <span class="ks-about-visual-tag">Новосибирск · НСО</span>
+        <div class="ks-about-visual-title">От песчаной подушки до финишного слоя — всё на одной площадке</div>
+        <div class="ks-about-visual-sub">Собственная производственная база, парк дорожной техники и инженеры с многолетним опытом строительства автодорог на сибирских грунтах.</div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- ===== БЛОК 4: УСЛУГИ ===== -->
+<section id="ks-services" class="ks-section ks-services">
+  <div class="ks-container">
+    <div class="ks-eyebrow">Что мы делаем</div>
+    <h2 class="ks-h2">Наши услуги</h2>
+    <p class="ks-lead">Полный спектр работ по дорожному строительству — от поставки тонны песка до сдачи готового участка дороги по акту.</p>
+ 
+    <div class="ks-svc-grid">
+      <a class="ks-svc" href="/asfalt_nsk">
+        <div class="ks-svc-ico"><svg viewBox="0 0 24 24"><path d="M3 19h18v2H3v-2zm2-4h14l-2-9H7l-2 9zm3-7h8l1.2 5H6.8L8 8z"/></svg></div>
+        <div class="ks-svc-title">Асфальтирование дорог</div>
+        <p class="ks-svc-text">Укладка асфальта на дворах, парковках и магистральных участках. Работаем горячими и литыми смесями.</p>
+        <span class="ks-svc-link">Подробнее</span>
+      </a>
+      <a class="ks-svc" href="/asfalt_nsk">
+        <div class="ks-svc-ico"><svg viewBox="0 0 24 24"><path d="M3 17l3-3 2 2 6-6 4 4 3-3v9H3v-3zm0-7l4-4 3 3 5-5 3 3 3-3v4l-3 3-3-3-5 5-3-3-4 4V10z"/></svg></div>
+        <div class="ks-svc-title">Ремонт дорог</div>
+        <p class="ks-svc-text">Ямочный ремонт, ремонт картами, фрезерование изношенного слоя и укладка нового — быстро и в любую погоду сезона.</p>
+        <span class="ks-svc-link">Подробнее</span>
+      </a>
+      <a class="ks-svc" href="/asfalt_nsk">
+        <div class="ks-svc-ico"><svg viewBox="0 0 24 24"><path d="M12 2l4 4-2 2 2 2-2 2 2 2-4 4-4-4 2-2-2-2 2-2-2-2 4-4zm-9 17h18v3H3v-3z"/></svg></div>
+        <div class="ks-svc-title">Благоустройство</div>
+        <p class="ks-svc-text">Тротуары, парковки и дворы под ключ: бордюрный камень, плитка, ливнёвки и разметка — комплексно.</p>
+        <span class="ks-svc-link">Подробнее</span>
+      </a>
+      <a class="ks-svc" href="/asfalt_nsk">
+        <div class="ks-svc-ico"><svg viewBox="0 0 24 24"><path d="M4 21l5-9 4 5 3-4 4 8H4zm14-12a3 3 0 110-6 3 3 0 010 6z"/></svg></div>
+        <div class="ks-svc-title">Строительство дорог</div>
+        <p class="ks-svc-text">Прокладка дорог с нуля: геодезия, земляные работы, основание из ЩПС, асфальтобетон, обочины и водоотвод.</p>
+        <span class="ks-svc-link">Подробнее</span>
+      </a>
+      <a class="ks-svc" href="/asfalt_nsk">
+        <div class="ks-svc-ico"><svg viewBox="0 0 24 24"><path d="M3 6h18v2H3V6zm2 4h14l-1 10H6L5 10zm4 2v6h2v-6H9zm4 0v6h2v-6h-2z"/></svg></div>
+        <div class="ks-svc-title">Продажа материалов</div>
+        <p class="ks-svc-text">Асфальтобетонные смеси, ЩПС и песок строительный. Отгрузка с базы навалом, доставка самосвалами по НСО.</p>
+        <span class="ks-svc-link">Подробнее</span>
+      </a>
+      <a class="ks-svc" href="/calculator">
+        <div class="ks-svc-ico"><svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zM7 17h2v2H7v-2zm0-4h2v2H7v-2zm0-4h10v2H7V9zm4 4h2v2h-2v-2zm0 4h6v2h-6v-2zm4-4h2v2h-2v-2z"/></svg></div>
+        <div class="ks-svc-title">Калькулятор работ</div>
+        <p class="ks-svc-text">Рассчитайте стоимость материалов и укладки онлайн — без звонков и заявок, прямо в один клик.</p>
+        <span class="ks-svc-link">Перейти к калькулятору</span>
+      </a>
+    </div>
+  </div>
+</section>
+ 
+<!-- ===== БЛОК 5: ФОРМА ЗАЯВКИ ===== -->
+<section data-ks-anchor="ks-form-section" class="ks-section ks-form-section">
+  <div class="ks-container">
+    <div class="ks-form-grid">
+      <div class="ks-form-info">
+        <div class="ks-eyebrow">Связаться</div>
+        <h2 class="ks-h2">Оставьте заявку — перезвоним в течение часа</h2>
+        <p>Заполните форму, и менеджер свяжется с вами, чтобы уточнить объём, рассчитать стоимость и согласовать сроки. По заявкам, оставленным в рабочее время, ответ приходит в течение часа.</p>
+        <div class="ks-form-contacts">
+          <div class="ks-form-contact">
+            <span class="ks-form-contact-ico"><svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.7 3.6 4.9 6.3 6.3l2.1-2.1c.3-.3.7-.4 1.1-.3 1.2.4 2.5.6 3.8.6.6 0 1.1.5 1.1 1.1v3.3c0 .6-.5 1.1-1.1 1.1C9.4 21 3 14.6 3 6.1 3 5.5 3.5 5 4.1 5h3.3c.6 0 1.1.5 1.1 1.1 0 1.3.2 2.6.6 3.8.1.4 0 .8-.3 1.1l-2.2 1.8z"/></svg></span>
+            <div><b>Офис</b><a href="tel:+73833110202">+7 (383) 311-02-02</a></div>
+          </div>
+          <div class="ks-form-contact">
+            <span class="ks-form-contact-ico"><svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.7 3.6 4.9 6.3 6.3l2.1-2.1c.3-.3.7-.4 1.1-.3 1.2.4 2.5.6 3.8.6.6 0 1.1.5 1.1 1.1v3.3c0 .6-.5 1.1-1.1 1.1C9.4 21 3 14.6 3 6.1 3 5.5 3.5 5 4.1 5h3.3c.6 0 1.1.5 1.1 1.1 0 1.3.2 2.6.6 3.8.1.4 0 .8-.3 1.1l-2.2 1.8z"/></svg></span>
+            <div><b>Аренда спецтехники</b><a href="tel:+79039356049">+7 903 935 60 49</a> · <a href="tel:+79137224955">+7 913 722-49-55</a></div>
+          </div>
+          <div class="ks-form-contact">
+            <span class="ks-form-contact-ico"><svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.7 3.6 4.9 6.3 6.3l2.1-2.1c.3-.3.7-.4 1.1-.3 1.2.4 2.5.6 3.8.6.6 0 1.1.5 1.1 1.1v3.3c0 .6-.5 1.1-1.1 1.1C9.4 21 3 14.6 3 6.1 3 5.5 3.5 5 4.1 5h3.3c.6 0 1.1.5 1.1 1.1 0 1.3.2 2.6.6 3.8.1.4 0 .8-.3 1.1l-2.2 1.8z"/></svg></span>
+            <div><b>Материалы</b><a href="tel:+79231504297">+7 923 150 42 97</a></div>
+          </div>
+          <div class="ks-form-contact">
+            <span class="ks-form-contact-ico"><svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></span>
+            <div><b>Почта</b><a href="mailto:ka-stroy54@bk.ru">ka-stroy54@bk.ru</a></div>
+          </div>
+          <div class="ks-form-contact">
+            <span class="ks-form-contact-ico"><svg viewBox="0 0 24 24"><path d="M12 2C8 2 5 5 5 9c0 5.3 7 13 7 13s7-7.7 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6.5a2.5 2.5 0 010 5z"/></svg></span>
+            <div><b>Адрес</b>г. Новосибирск, ул. 1-ая Грузинская, 32/1</div>
+          </div>
+        </div>
+      </div>
+      <form class="ks-form-wrap" id="ks-form-el" action="https://api.web3forms.com/submit" method="POST" novalidate>
+        <input type="hidden" name="access_key" value="cd4f2ebd-5553-4446-9f51-a14d2d561a80">
+        <input type="hidden" name="subject" value="Заявка с сайта КА-Строй">
+        <input type="hidden" name="from_name" value="Сайт КА-Строй">
+        <input type="hidden" name="redirect" value="false">
+        <input type="checkbox" name="botcheck" class="ks-form-honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="ks-form-title">Оставьте ваш номер<br>и мы свяжемся с вами</div>
+        <div class="ks-form-sub">Бесплатная консультация и расчёт</div>
+        <div class="ks-form-field"><input type="text" name="name" placeholder="Имя" required></div>
+        <div class="ks-form-field"><input type="tel" name="phone" placeholder="Телефон" required></div>
+        <div class="ks-form-checks-title">Выберите интересующие услуги:</div>
+        <div class="ks-form-checks">
+          <label class="ks-form-check"><input type="checkbox" data-svc value="Материалы для дорожного строительства"><span>Материалы для дорожного строительства</span></label>
+          <label class="ks-form-check"><input type="checkbox" data-svc value="Аренда спецтехники"><span>Аренда спецтехники</span></label>
+          <label class="ks-form-check"><input type="checkbox" data-svc value="Дорожные работы"><span>Дорожные работы</span></label>
+          <label class="ks-form-check"><input type="checkbox" data-svc value="Благоустройство"><span>Благоустройство</span></label>
+        </div>
+        <button type="submit" class="ks-form-submit" id="ks-form-submit">Отправить</button>
+        <div class="ks-form-foot">Нажимая на кнопку, вы соглашаетесь с пользовательским соглашением и&nbsp;обработкой персональных данных.</div>
+        <div id="ks-form-status" class="ks-form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+ 
+<!-- ===== CTA ===== -->
+<section class="ks-cta">
+  <div class="ks-container ks-cta-inner">
+    <h2>Готовы посчитать ваш объект?</h2>
+    <p>Откройте онлайн-калькулятор и прикиньте бюджет за минуту, либо позвоните — подберём марку смеси и пришлём коммерческое предложение.</p>
+    <div class="ks-cta-actions">
+      <a class="ks-btn ks-btn--dark" href="/calculator">Открыть калькулятор</a>
+      <a class="ks-btn ks-btn--dark" href="tel:+73833110202">+7 (383) 311-02-02</a>
+    </div>
+  </div>
+</section>
+ 
+<script>
+// ===== Чистим верхние паддинги/радиусы всех родительских секций (с !important) =====
+(function(){
+  var root=document.querySelector('.ks-root');
+  if(!root)return;
+  var props=[['padding-top','0'],['margin-top','0'],['border-top-left-radius','0'],['border-top-right-radius','0'],['overflow','visible'],['overflow-y','visible']];
+  var node=root.parentElement;
+  while(node && node!==document.documentElement){
+    for(var i=0;i<props.length;i++){
+      try{node.style.setProperty(props[i][0],props[i][1],'important');}catch(e){}
+    }
+    if(node===document.body)break;
+    node=node.parentElement;
+  }
+})();
+ 
+// ===== Снимаем автопрокрутку по хешу в URL =====
+(function(){
+  try{
+    if(location.hash){
+      history.replaceState(null,'',location.pathname+location.search);
+      window.scrollTo(0,0);
+    }
+    window.addEventListener('load',function(){
+      if(location.hash){history.replaceState(null,'',location.pathname+location.search);}
+    });
+  }catch(e){}
+})();
+ 
+// ===== Плавная прокрутка к форме по клику, без мусора в URL =====
+(function(){
+  var links=document.querySelectorAll('a[data-ks-scroll]');
+  for(var i=0;i<links.length;i++){
+    (function(a){
+      a.addEventListener('click',function(e){
+        e.preventDefault();
+        var t=document.querySelector('[data-ks-anchor="'+a.getAttribute('data-ks-scroll')+'"]');
+        if(t)t.scrollIntoView({behavior:'smooth',block:'start'});
+      });
+    })(links[i]);
+  }
+})();
+ 
+// ===== Отправка формы через Web3Forms =====
+(function(){
+  var form=document.getElementById('ks-form-el');
+  if(!form)return;
+  var btn=document.getElementById('ks-form-submit');
+  var statusEl=document.getElementById('ks-form-status');
+  function setStatus(kind,text){
+    statusEl.className='ks-form-status '+(kind==='ok'?'is-ok':kind==='err'?'is-err':'');
+    statusEl.textContent=text||'';
+  }
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    var nameEl=form.querySelector('input[name="name"]');
+    var phoneEl=form.querySelector('input[name="phone"]');
+    var name=(nameEl.value||'').trim();
+    var phone=(phoneEl.value||'').trim();
+    if(!name||!phone){
+      var miss=[];
+      if(!name)miss.push('имя');
+      if(!phone)miss.push('телефон');
+      setStatus('err','Пожалуйста, заполните: '+miss.join(', '));
+      return;
+    }
+    btn.disabled=true;
+    var origLabel=btn.textContent;
+    btn.textContent='Отправляем…';
+    setStatus('','');
+    var data=new FormData(form);
+    // Соберём услуги в одно текстовое поле для удобства письма
+    var svcs=[];
+    var nodes=form.querySelectorAll('input[data-svc]:checked');
+    for(var i=0;i<nodes.length;i++)svcs.push(nodes[i].value);
+    data.append('Интересующие услуги',svcs.length?svcs.join(', '):'не указаны');
+    data.set('phone',phone);
+    data.set('name',name);
+    fetch('https://api.web3forms.com/submit',{method:'POST',body:data,headers:{Accept:'application/json'}})
+      .then(function(r){return r.json().then(function(j){return {ok:r.ok,body:j}})})
+      .then(function(res){
+        if(res.ok && res.body && res.body.success){
+          form.reset();
+          setStatus('ok','Спасибо! Заявка отправлена — мы перезвоним в течение часа.');
+        }else{
+          setStatus('err','Не удалось отправить. Позвоните по +7 (383) 311-02-02 или напишите на ka-stroy54@bk.ru.');
+        }
+      })
+      .catch(function(){
+        setStatus('err','Не удалось отправить. Позвоните по +7 (383) 311-02-02 или напишите на ka-stroy54@bk.ru.');
+      })
+      .then(function(){btn.disabled=false;btn.textContent=origLabel;});
+  });
+})();
+</script>
+</div>
+<!-- ====== КОНЕЦ ВСТАВКИ КА-СТРОЙ ====== -->

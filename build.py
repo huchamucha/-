@@ -1,9 +1,22 @@
 #!/usr/bin/env python3
-"""Build the КА-Строй site. Wraps each page body with shared header/footer/layout."""
-import os, re
- 
+"""Build the КА-Строй standalone site.
+
+Reads page bodies (page_*.html) from the project root, wraps each one with the
+shared head/header/footer, copies static assets, and writes the result to
+``dist/``. The output directory is a self-contained static site that can be
+uploaded to any hosting (FTP, Reg.ru, GitHub Pages, S3, etc.).
+
+Usage:
+    python3 build.py
+"""
+import datetime
+import os
+import re
+import shutil
+
 ROOT = os.path.dirname(os.path.abspath(__file__))
- 
+DIST = os.path.join(ROOT, 'dist')
+
 HEAD = '''<!doctype html>
 <html lang="ru">
 <head>
@@ -16,7 +29,7 @@ HEAD = '''<!doctype html>
 </head>
 <body>
 '''
- 
+
 HEADER = '''<header class="site-header">
   <div class="container site-header__inner">
     <a class="brand" href="index.html">
@@ -27,17 +40,17 @@ HEADER = '''<header class="site-header">
     <nav class="nav" aria-label="Главное меню">
       <a href="index.html">Главная</a>
       <a href="about.html">О компании</a>
-      <a href="asfalt_nsk.html">Асфальт</a>
+      <a href="asfalt_nsk.html">Прайс-лист</a>
       <a href="arenda_techniki_nsk.html">Аренда техники</a>
       <a href="calculator.html">Калькулятор</a>
-      <a href="gallery.html">Работы</a>
+      <a href="gallery.html">Галерея работ</a>
       <a href="news.html">Новости</a>
       <a class="nav-cta" href="contacts.html">Контакты</a>
     </nav>
   </div>
 </header>
 '''
- 
+
 FOOTER = '''<footer class="site-footer">
   <div class="container">
     <div class="footer-grid">
@@ -83,63 +96,129 @@ FOOTER = '''<footer class="site-footer">
 </body>
 </html>
 '''
- 
+
 PAGES = {
-  'index.html': {
-    'title': 'КА-Строй — дорожное строительство в Новосибирске | асфальт, ремонт дорог, аренда техники',
-    'description': 'КА-Строй — производство асфальта, строительство и ремонт дорог, благоустройство, аренда спецтехники в Новосибирске. Собственный АБЗ, член АСОНО, работа по 44-ФЗ и 223-ФЗ.',
-    'body': 'page_index.html'
-  },
-  'about.html': {
-    'title': 'О компании — ООО ИСК «КА-Строй» в Новосибирске',
-    'description': 'ООО ИСК «КА-Строй» с 2020 года: член АСОНО (СРО-С-284-21062017), собственный АБЗ, парк техники, более 14 контрактов по 44-ФЗ за год.',
-    'body': 'page_about.html'
-  },
-  'asfalt_nsk.html': {
-    'title': 'Асфальт и материалы для дорожного строительства — КА-Строй Новосибирск',
-    'description': 'Производство и продажа асфальтобетонной смеси Б-II от 5000 ₽/т, ЩПС, песка, щебня. Асфальтирование дорог под ключ от 500 ₽/м². Доставка по Новосибирску и НСО.',
-    'body': 'page_asfalt.html'
-  },
-  'arenda_techniki_nsk.html': {
-    'title': 'Аренда спецтехники в Новосибирске — КА-Строй',
-    'description': 'Аренда экскаваторов, катков, асфальтоукладчиков, погрузчиков, грейдеров в Новосибирске. Промокод «САЙТ КА-СТРОЙ» — скидка −10%.',
-    'body': 'page_arenda.html'
-  },
-  'calculator.html': {
-    'title': 'Калькулятор стоимости работ и материалов — КА-Строй',
-    'description': 'Онлайн-калькулятор стоимости асфальтирования, материалов (асфальт Б-II, ЩПС, песок) и аренды спецтехники.',
-    'body': 'page_calculator.html'
-  },
-  'gallery.html': {
-    'title': 'Галерея наших работ — КА-Строй Новосибирск',
-    'description': 'Реальные объекты КА-Строй: асфальтирование, ремонт автодорог, благоустройство в Новосибирске и Новосибирской области (ТУАД, МКУ «Дзержинка» и др.).',
-    'body': 'page_gallery.html'
-  },
-  'news.html': {
-    'title': 'Новости компании КА-Строй',
-    'description': 'Новости и пресс-релизы компании КА-Строй: участие в нацпроектах, новые контракты, развитие производства.',
-    'body': 'page_news.html'
-  },
-  'contacts.html': {
-    'title': 'Контакты КА-Строй в Новосибирске — телефон, адрес офиса',
-    'description': 'Контакты КА-Строй: офис +7 (383) 311-02-02, аренда техники, материалы, производство работ. Адрес: г. Новосибирск, ул. 1-ая Грузинская, 32/1.',
-    'body': 'page_contacts.html'
-  }
+    'index.html': {
+        'title': 'КА-Строй — дорожное строительство в Новосибирске | асфальт, ремонт дорог, аренда техники',
+        'description': 'КА-Строй — производство асфальта, строительство и ремонт дорог, благоустройство, аренда спецтехники в Новосибирске. Собственный АБЗ, член АСОНО, работа по 44-ФЗ и 223-ФЗ.',
+        'body': 'page_index.html',
+    },
+    'about.html': {
+        'title': 'О компании — ООО ИСК «КА-Строй» в Новосибирске',
+        'description': 'ООО ИСК «КА-Строй» с 2020 года: член АСОНО (СРО-С-284-21062017), собственный АБЗ, парк техники, более 14 контрактов по 44-ФЗ за год.',
+        'body': 'page_about.html',
+    },
+    'asfalt_nsk.html': {
+        'title': 'Асфальт и материалы для дорожного строительства — КА-Строй Новосибирск',
+        'description': 'Производство и продажа асфальтобетонной смеси Б-II от 5000 ₽/т, ЩПС, песка, щебня. Асфальтирование дорог под ключ от 500 ₽/м². Доставка по Новосибирску и НСО.',
+        'body': 'page_asfalt.html',
+    },
+    'arenda_techniki_nsk.html': {
+        'title': 'Аренда спецтехники в Новосибирске — КА-Строй',
+        'description': 'Аренда экскаваторов, катков, асфальтоукладчиков, погрузчиков, грейдеров в Новосибирске. Промокод «САЙТ КА-СТРОЙ» — скидка −10%.',
+        'body': 'page_arenda.html',
+    },
+    'calculator.html': {
+        'title': 'Калькулятор стоимости работ и материалов — КА-Строй',
+        'description': 'Онлайн-калькулятор стоимости асфальтирования, материалов (асфальт Б-II, ЩПС, песок) и аренды спецтехники.',
+        'body': 'page_calculator.html',
+    },
+    'gallery.html': {
+        'title': 'Галерея наших работ — КА-Строй Новосибирск',
+        'description': 'Реальные объекты КА-Строй: асфальтирование, ремонт автодорог, благоустройство в Новосибирске и Новосибирской области (ТУАД, МКУ «Дзержинка» и др.).',
+        'body': 'page_gallery.html',
+    },
+    'news.html': {
+        'title': 'Новости компании КА-Строй',
+        'description': 'Новости и пресс-релизы компании КА-Строй: участие в нацпроектах, новые контракты, развитие производства.',
+        'body': 'page_news.html',
+    },
+    'contacts.html': {
+        'title': 'Контакты КА-Строй в Новосибирске — телефон, адрес офиса',
+        'description': 'Контакты КА-Строй: офис +7 (383) 311-02-02, аренда техники, материалы, производство работ. Адрес: г. Новосибирск, ул. 1-ая Грузинская, 32/1.',
+        'body': 'page_contacts.html',
+    },
 }
- 
-def main():
-    bodies_dir = os.path.join(ROOT, '_partials')
-    for out, meta in PAGES.items():
-        body_path = os.path.join(bodies_dir, meta['body'])
+
+
+def mark_active(html: str, current_page: str) -> str:
+    """Add ``is-active`` to the header nav link pointing at ``current_page``.
+
+    Avoids relying on JavaScript for the active highlight so the correct item
+    is highlighted even with JS disabled and during the first paint. The change
+    is confined to the ``<nav class="nav">…</nav>`` block, so the brand link
+    and footer menu are intentionally left alone.
+    """
+    nav_match = re.search(r'<nav class="nav"[^>]*>.*?</nav>', html, flags=re.DOTALL)
+    if not nav_match:
+        return html
+
+    nav_block = nav_match.group(0)
+    pattern = re.compile(
+        r'<a\b(?P<attrs>[^>]*?\bhref="' + re.escape(current_page) + r'"[^>]*)>'
+    )
+
+    def repl(match: re.Match) -> str:
+        attrs = match.group('attrs')
+        m = re.search(r'\bclass="([^"]*)"', attrs)
+        if m:
+            classes = m.group(1).split()
+            if 'is-active' in classes:
+                return match.group(0)
+            classes.append('is-active')
+            new_attrs = re.sub(
+                r'\bclass="[^"]*"',
+                'class="' + ' '.join(classes) + '"',
+                attrs,
+                count=1,
+            )
+        else:
+            new_attrs = attrs.rstrip() + ' class="is-active"'
+        return f'<a{new_attrs}>'
+
+    new_nav = pattern.sub(repl, nav_block, count=1)
+    return html[:nav_match.start()] + new_nav + html[nav_match.end():]
+
+
+def copy_tree(src: str, dst: str) -> None:
+    """Recursively copy a directory, replacing the destination if it exists."""
+    if os.path.exists(dst):
+        shutil.rmtree(dst)
+    shutil.copytree(src, dst)
+
+
+def build() -> None:
+    if os.path.exists(DIST):
+        shutil.rmtree(DIST)
+    os.makedirs(DIST)
+
+    # Static assets
+    css_dir = os.path.join(DIST, 'css')
+    js_dir = os.path.join(DIST, 'js')
+    os.makedirs(css_dir, exist_ok=True)
+    os.makedirs(js_dir, exist_ok=True)
+    shutil.copy2(os.path.join(ROOT, 'style.css'), os.path.join(css_dir, 'style.css'))
+    shutil.copy2(os.path.join(ROOT, 'main.js'), os.path.join(js_dir, 'main.js'))
+    copy_tree(os.path.join(ROOT, 'img'), os.path.join(DIST, 'img'))
+
+    year = datetime.datetime.now().year
+
+    for out_name, meta in PAGES.items():
+        body_path = os.path.join(ROOT, meta['body'])
         with open(body_path, encoding='utf-8') as f:
             body = f.read()
         html = HEAD.format(title=meta['title'], description=meta['description'])
         html += HEADER
         html += body
-        html += FOOTER.format(year=2026)
-        with open(os.path.join(ROOT, out), 'w', encoding='utf-8') as f:
+        html += FOOTER.format(year=year)
+        html = mark_active(html, out_name)
+        with open(os.path.join(DIST, out_name), 'w', encoding='utf-8') as f:
             f.write(html)
-        print('Built', out)
- 
+        print(f'Built dist/{out_name}')
+
+    print(f'\nDone. Static site is in: {DIST}')
+    print('Preview locally: python3 -m http.server -d dist 8080')
+
+
 if __name__ == '__main__':
-    main()
+    build()

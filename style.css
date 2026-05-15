@@ -127,7 +127,7 @@ button{cursor:pointer;border:0;background:none}
   background:radial-gradient(circle at 70% 30%,#2f343c 0%,#1a1c20 60%);
 }
 .hero--full{
-  background:url('../img/hero/road.jpg') 62% 42%/cover no-repeat;
+  background:url('../img/hero/road.webp') 62% 42%/cover no-repeat;
   display:flex;flex-direction:column;
 }
 .hero--full .hero__content{

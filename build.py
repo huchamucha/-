@@ -51,6 +51,9 @@ HEAD = '''<!doctype html>
 <meta name="twitter:image" content="''' + OG_IMAGE + '''">
 <!-- Security -->
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+<meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://api.web3forms.com; frame-src https://yandex.ru https://api-maps.yandex.ru; object-src 'none'; base-uri 'self'; form-action 'self' https://api.web3forms.com;">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <!-- Favicons -->
 <link rel="icon" type="image/png" sizes="192x192" href="img/logo.png">
@@ -153,15 +156,15 @@ FOOTER = '''<footer class="site-footer">
       <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" style="display:none">
       <label class="callback-modal__field">
         <span>Ваше имя</span>
-        <input type="text" name="Имя" required placeholder="Как к вам обращаться">
+        <input type="text" name="Имя" required placeholder="Как к вам обращаться" autocomplete="name">
       </label>
       <label class="callback-modal__field">
         <span>Телефон</span>
-        <input type="tel" name="Телефон" required placeholder="+7 ___ ___ __ __">
+        <input type="tel" name="Телефон" required placeholder="+7 (___) ___-__-__" autocomplete="tel" inputmode="tel">
       </label>
       <button type="submit" class="callback-modal__submit">Заказать звонок</button>
       <div class="callback-modal__status" role="status"></div>
-      <p class="callback-modal__hint">Нажимая «Заказать звонок», вы соглашаетесь на обработку персональных данных.</p>
+      <p class="callback-modal__hint">Нажимая «Заказать звонок», вы соглашаетесь на обработку персональных данных в соответствии с <a href="privacy.html" style="color:var(--text-2);text-decoration:underline">политикой конфиденциальности</a>.</p>
     </form>
   </div>
 </div>

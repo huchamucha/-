@@ -168,7 +168,16 @@ button{cursor:pointer;border:0;background:none}
 .hero--full .hero__content .eyebrow{color:#ff6f72;text-shadow:0 1px 6px rgba(0,0,0,.65)}
 .hero--full .hero__stats b{text-shadow:0 1px 8px rgba(0,0,0,.65)}
 .hero--full .hero__stats span{color:rgba(238,240,243,.9);text-shadow:0 1px 6px rgba(0,0,0,.7)}
-.hero--full .hero__stats{gap:22px 28px}
+.hero--full .hero__stats{
+  gap:22px 28px;
+  padding:14px 22px;
+  border-radius:16px;
+  background:linear-gradient(180deg,rgba(8,10,14,.78),rgba(8,10,14,.62));
+  border:1px solid rgba(255,255,255,.1);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  width:fit-content;
+  box-shadow:0 12px 36px rgba(0,0,0,.35);
+}
 .hero--full .hero__stat{min-width:0}
 .hero--full .btn--ghost{background:rgba(20,22,26,.55);border-color:rgba(255,255,255,.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 .hero__title{font-size:64px;font-weight:900;line-height:1;letter-spacing:-.015em;margin:18px 0 22px;text-shadow:0 2px 16px rgba(0,0,0,.55)}

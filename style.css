@@ -152,7 +152,7 @@ button{cursor:pointer;border:0;background:none}
 .hero::after{display:none}
 .hero--full::before{
   content:"";position:absolute;inset:0;
-  background:linear-gradient(180deg, rgba(8,10,14,.1) 0%, rgba(8,10,14,.35) 30%, rgba(8,10,14,.65) 60%, rgba(8,10,14,.9) 100%);
+  background:linear-gradient(180deg, rgba(8,10,14,.9) 0%, rgba(8,10,14,.65) 30%, rgba(8,10,14,.35) 60%, rgba(8,10,14,.1) 100%);
   pointer-events:none;z-index:1;
 }
 .hero--full::after{

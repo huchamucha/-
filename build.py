@@ -335,6 +335,36 @@ def build_jsonld(page: str) -> str:
         ],
     }
 
+    # Service schema for service pages
+    SERVICES = {
+        'service-construction.html': {
+            "name": "Строительство дорог под ключ",
+            "description": "Полный цикл строительства автомобильных дорог: "
+                           "земляное полотно, основание из ЩПС и щебня, "
+                           "укладка асфальтобетонного покрытия в 1–2 слоя, "
+                           "геодезия, лабораторный контроль и сдача объекта по акту.",
+            "serviceType": "Строительство дорог",
+            "url": base + "/service-construction.html",
+        },
+        'service-repair.html': {
+            "name": "Ремонт дорог и дорожных покрытий",
+            "description": "Ремонт автомобильных дорог: ямочный ремонт, "
+                           "ремонт картами, фрезерование старого покрытия, "
+                           "устройство выравнивающего и верхнего слоя асфальтобетона, "
+                           "заливка швов и трещин.",
+            "serviceType": "Ремонт дорог",
+            "url": base + "/service-repair.html",
+        },
+        'service-landscaping.html': {
+            "name": "Благоустройство территорий",
+            "description": "Благоустройство дворов, парковок, тротуаров и площадок: "
+                           "устройство бортового камня, асфальтобетонного покрытия, "
+                           "организация поверхностного водоотвода, озеленение.",
+            "serviceType": "Благоустройство",
+            "url": base + "/service-landscaping.html",
+        },
+    }
+
     if page == 'index.html':
         website = {
             "@context": "https://schema.org",
@@ -344,6 +374,30 @@ def build_jsonld(page: str) -> str:
             "inLanguage": "ru",
         }
         data = [org, website, breadcrumb]
+    elif page in SERVICES:
+        svc_info = SERVICES[page]
+        service = {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": svc_info["name"],
+            "description": svc_info["description"],
+            "serviceType": svc_info["serviceType"],
+            "url": svc_info["url"],
+            "provider": {
+                "@type": "LocalBusiness",
+                "@id": base + "/#organization",
+            },
+            "areaServed": {
+                "@type": "AdministrativeArea",
+                "name": "Новосибирская область",
+            },
+            "availableChannel": {
+                "@type": "ServiceChannel",
+                "serviceUrl": base + "/contacts.html",
+                "servicePhone": "+7 (383) 311-02-02",
+            },
+        }
+        data = [org, breadcrumb, service]
     else:
         data = [org, breadcrumb]
 

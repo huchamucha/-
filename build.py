@@ -34,6 +34,7 @@ HEAD = '''<!doctype html>
 <title>{title}</title>
 <meta name="description" content="{description}">
 <link rel="canonical" href="{canonical}">
+<link rel="alternate" hreflang="ru" href="{canonical}">
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ru_RU">
@@ -72,7 +73,7 @@ HEAD = '''<!doctype html>
 HEADER = '''<header class="site-header">
   <div class="container site-header__inner">
     <a class="brand" href="index.html">
-      <img class="brand__logo" src="img/logo.png" alt="КА-Строй">
+      <img class="brand__logo" src="img/logo.png" alt="КА-Строй" width="330" height="202">
       <span class="brand__name">КА<b>-</b>СТРОЙ</span>
     </a>
     <button class="nav-toggle" aria-label="Меню"><span></span></button>
@@ -106,7 +107,7 @@ FOOTER = '''<footer class="site-footer">
   <div class="container">
     <div class="footer-grid">
       <div class="footer-col">
-        <div class="footer-brand"><img class="brand__logo" src="img/logo.png" alt="КА-Строй"><span class="brand__name">КА<b>-</b>СТРОЙ</span></div>
+        <div class="footer-brand"><img class="brand__logo" src="img/logo.png" alt="КА-Строй" width="330" height="202"><span class="brand__name">КА<b>-</b>СТРОЙ</span></div>
         <p>ООО ИСК «КА-Строй» — производство асфальта, строительство и ремонт дорог, благоустройство и аренда спецтехники в Новосибирске и Новосибирской области.</p>
         <p style="margin-top:10px"><b style="color:#fff">Член АСОНО</b> · СРО-С-284-21062017 · реестр №2360</p>
       </div>
@@ -250,6 +251,22 @@ SITEMAP_META = {
 }
 
 
+# ── Breadcrumb mapping for JSON-LD ─────────────────────────────────────────
+BREADCRUMBS = {
+    'index.html': [('Главная', 'index.html')],
+    'about.html': [('Главная', 'index.html'), ('О компании', 'about.html')],
+    'asfalt_nsk.html': [('Главная', 'index.html'), ('Прайс-лист', 'asfalt_nsk.html')],
+    'service-construction.html': [('Главная', 'index.html'), ('Услуги', 'asfalt_nsk.html'), ('Строительство дорог', 'service-construction.html')],
+    'service-repair.html': [('Главная', 'index.html'), ('Услуги', 'asfalt_nsk.html'), ('Ремонт дорог', 'service-repair.html')],
+    'service-landscaping.html': [('Главная', 'index.html'), ('Услуги', 'asfalt_nsk.html'), ('Благоустройство', 'service-landscaping.html')],
+    'arenda_techniki_nsk.html': [('Главная', 'index.html'), ('Аренда техники', 'arenda_techniki_nsk.html')],
+    'calculator.html': [('Главная', 'index.html'), ('Калькулятор', 'calculator.html')],
+    'gallery.html': [('Главная', 'index.html'), ('Галерея работ', 'gallery.html')],
+    'news.html': [('Главная', 'index.html'), ('Новости', 'news.html')],
+    'contacts.html': [('Главная', 'index.html'), ('Контакты', 'contacts.html')],
+}
+
+
 def build_jsonld(page: str) -> str:
     """Return a <script type="application/ld+json"> block with Schema.org data."""
     base = SITE_URL.rstrip('/')
@@ -302,6 +319,22 @@ def build_jsonld(page: str) -> str:
         },
     }
 
+    # BreadcrumbList
+    crumbs = BREADCRUMBS.get(page, [('Главная', 'index.html')])
+    breadcrumb = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": i + 1,
+                "name": name,
+                "item": base + '/' + url,
+            }
+            for i, (name, url) in enumerate(crumbs)
+        ],
+    }
+
     if page == 'index.html':
         website = {
             "@context": "https://schema.org",
@@ -310,9 +343,9 @@ def build_jsonld(page: str) -> str:
             "url": base,
             "inLanguage": "ru",
         }
-        data = [org, website]
+        data = [org, website, breadcrumb]
     else:
-        data = [org]
+        data = [org, breadcrumb]
 
     blob = json.dumps(data, ensure_ascii=False, separators=(',', ':'))
     return f'<script type="application/ld+json">{blob}</script>'

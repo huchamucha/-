@@ -64,6 +64,60 @@
     });
   }
  
+  // Callback modal (плашка «Заказать звонок» в шапке)
+  var cbModal=document.querySelector('[data-callback-modal]');
+  if(cbModal){
+    var opens=document.querySelectorAll('[data-callback-open]');
+    var closes=cbModal.querySelectorAll('[data-callback-close]');
+    var cbForm=cbModal.querySelector('[data-callback-form]');
+    var cbStatus=cbModal.querySelector('.callback-modal__status');
+    var cbSubmit=cbModal.querySelector('.callback-modal__submit');
+    function openModal(){
+      cbModal.removeAttribute('hidden');
+      cbModal.classList.add('is-open');
+      document.body.style.overflow='hidden';
+      var firstInput=cbForm&&cbForm.querySelector('input[type="text"],input[type="tel"]');
+      if(firstInput){setTimeout(function(){firstInput.focus();},80);}
+    }
+    function closeModal(){
+      cbModal.classList.remove('is-open');
+      cbModal.setAttribute('hidden','');
+      document.body.style.overflow='';
+    }
+    for(var k=0;k<opens.length;k++){
+      opens[k].addEventListener('click',function(e){e.preventDefault();openModal();});
+    }
+    for(var m=0;m<closes.length;m++){
+      closes[m].addEventListener('click',function(e){e.preventDefault();closeModal();});
+    }
+    document.addEventListener('keydown',function(e){
+      if(e.key==='Escape'&&cbModal.classList.contains('is-open')){closeModal();}
+    });
+    if(cbForm){
+      cbForm.addEventListener('submit',function(e){
+        e.preventDefault();
+        if(cbStatus){cbStatus.className='callback-modal__status';cbStatus.textContent='';}
+        if(cbSubmit){cbSubmit.disabled=true;cbSubmit.textContent='Отправляем…';}
+        var fd=new FormData(cbForm);
+        fetch(cbForm.getAttribute('action'),{
+          method:'POST',body:fd,headers:{'Accept':'application/json'}
+        }).then(function(r){return r.json();}).then(function(data){
+          if(data.success){
+            if(cbStatus){cbStatus.className='callback-modal__status ok';cbStatus.textContent='Спасибо! Перезвоним в течение 15 минут.';}
+            cbForm.reset();
+            setTimeout(closeModal,2200);
+          }else{
+            if(cbStatus){cbStatus.className='callback-modal__status err';cbStatus.textContent='Не удалось отправить. Позвоните: +7 (383) 311-02-02.';}
+          }
+        }).catch(function(){
+          if(cbStatus){cbStatus.className='callback-modal__status err';cbStatus.textContent='Не удалось отправить. Позвоните: +7 (383) 311-02-02.';}
+        }).finally(function(){
+          if(cbSubmit){cbSubmit.disabled=false;cbSubmit.textContent='Заказать звонок';}
+        });
+      });
+    }
+  }
+
   // Плавный скролл по data-scroll
   var scrollLinks=document.querySelectorAll('a[data-scroll]');
   for(var j=0;j<scrollLinks.length;j++){

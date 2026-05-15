@@ -45,8 +45,20 @@ HEADER = '''<header class="site-header">
       <a href="calculator.html">Калькулятор</a>
       <a href="gallery.html">Галерея работ</a>
       <a href="news.html">Новости</a>
-      <a class="nav-cta" href="contacts.html">Контакты</a>
+      <a href="contacts.html">Контакты</a>
     </nav>
+    <div class="header-call">
+      <a class="header-call__phone" href="tel:+73833110202" aria-label="Позвонить в КА-Строй">
+        <span class="header-call__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24c1.12.37 2.32.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.24 1.02l-2.21 2.2z"/></svg>
+        </span>
+        <span class="header-call__text">
+          <strong>+7 (383) 311-02-02</strong>
+          <small>Ежедневно с 9:00 до 18:00</small>
+        </span>
+      </a>
+      <button type="button" class="header-call__btn" data-callback-open>Заказать звонок</button>
+    </div>
   </div>
 </header>
 '''
@@ -92,6 +104,30 @@ FOOTER = '''<footer class="site-footer">
     </div>
   </div>
 </footer>
+<div class="callback-modal" data-callback-modal hidden>
+  <div class="callback-modal__overlay" data-callback-close></div>
+  <div class="callback-modal__card" role="dialog" aria-modal="true" aria-labelledby="callback-title">
+    <button class="callback-modal__close" type="button" data-callback-close aria-label="Закрыть">×</button>
+    <h3 id="callback-title">Заказать звонок</h3>
+    <p class="callback-modal__desc">Перезвоним в течение 15 минут в рабочее время (ежедневно 9:00–18:00).</p>
+    <form action="https://api.web3forms.com/submit" method="POST" data-callback-form>
+      <input type="hidden" name="access_key" value="cd4f2ebd-5553-4446-9f51-a14d2d561a80">
+      <input type="hidden" name="subject" value="КА-Строй — заказ обратного звонка">
+      <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" style="display:none">
+      <label class="callback-modal__field">
+        <span>Ваше имя</span>
+        <input type="text" name="Имя" required placeholder="Как к вам обращаться">
+      </label>
+      <label class="callback-modal__field">
+        <span>Телефон</span>
+        <input type="tel" name="Телефон" required placeholder="+7 ___ ___ __ __">
+      </label>
+      <button type="submit" class="callback-modal__submit">Заказать звонок</button>
+      <div class="callback-modal__status" role="status"></div>
+      <p class="callback-modal__hint">Нажимая «Заказать звонок», вы соглашаетесь на обработку персональных данных.</p>
+    </form>
+  </div>
+</div>
 <script src="js/main.js"></script>
 </body>
 </html>

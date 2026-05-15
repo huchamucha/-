@@ -488,6 +488,10 @@ button{cursor:pointer;border:0;background:none}
 .tech__body{padding:22px 26px}
 .tech__h{font-size:22px;font-weight:800;color:#fff;margin-bottom:8px}
 .tech__sub{font-size:13px;color:var(--orange);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px}
+.tech__price{display:flex;align-items:baseline;gap:12px;margin-bottom:14px}
+.tech__price-val{font-size:22px;font-weight:800;color:var(--orange)}
+.tech__price-min{font-size:13px;color:var(--text-3);font-weight:600}
+.tech-category{margin-top:40px;margin-bottom:18px;padding-bottom:10px;border-bottom:2px solid var(--orange);font-size:24px;font-weight:800;color:var(--white)}
 .tech__specs{display:grid;grid-template-columns:repeat(2,1fr);gap:8px 24px;font-size:14px;line-height:1.5;color:var(--text-2)}
 .tech__specs li{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed rgba(255,255,255,.07)}
 .tech__specs li b{color:#fff;font-weight:600}

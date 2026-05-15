@@ -2,6 +2,30 @@
 // КА-Строй — общий JS: мобильное меню, форма (Web3Forms), калькулятор
 // ============================================================
 (function(){
+  // Стрелки для ленты популярных материалов
+  try{
+    var tracks=document.querySelectorAll('.hero-ribbon-track');
+    for(var t=0;t<tracks.length;t++){
+      (function(track){
+        var ribbon=track.querySelector('.hero-ribbon');
+        var prev=track.querySelector('[data-ribbon-prev]');
+        var next=track.querySelector('[data-ribbon-next]');
+        if(!ribbon||!prev||!next)return;
+        function step(){var card=ribbon.querySelector('.hero-ribbon__card');return card?card.offsetWidth+14:240;}
+        function update(){
+          var max=ribbon.scrollWidth-ribbon.clientWidth-2;
+          if(ribbon.scrollLeft<=0){prev.setAttribute('disabled','');}else{prev.removeAttribute('disabled');}
+          if(ribbon.scrollLeft>=max){next.setAttribute('disabled','');}else{next.removeAttribute('disabled');}
+        }
+        prev.addEventListener('click',function(){ribbon.scrollBy({left:-step(),behavior:'smooth'});});
+        next.addEventListener('click',function(){ribbon.scrollBy({left:step(),behavior:'smooth'});});
+        ribbon.addEventListener('scroll',update,{passive:true});
+        window.addEventListener('resize',update);
+        setTimeout(update,80);
+      })(tracks[t]);
+    }
+  }catch(e){}
+
   // Мобильное меню
   var toggle=document.querySelector('.nav-toggle');
   var nav=document.querySelector('.nav');

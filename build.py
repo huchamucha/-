@@ -10,6 +10,7 @@ Usage:
     python3 build.py
 """
 import datetime
+import json
 import os
 import re
 import shutil
@@ -22,6 +23,9 @@ DIST = os.path.join(ROOT, 'dist')
 # the site is deployed (e.g. 'https://ka-stroy54.ru').
 SITE_URL = 'https://ka-stroy54.ru'
 
+# ── OG image (shared across all pages) ──────────────────────────────────────
+OG_IMAGE = SITE_URL.rstrip('/') + '/img/og-cover.jpg'
+
 HEAD = '''<!doctype html>
 <html lang="ru">
 <head>
@@ -29,7 +33,34 @@ HEAD = '''<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{title}</title>
 <meta name="description" content="{description}">
-<link rel="icon" type="image/png" href="img/logo.png">
+<link rel="canonical" href="{canonical}">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:site_name" content="КА-Строй">
+<meta property="og:title" content="{title}">
+<meta property="og:description" content="{description}">
+<meta property="og:url" content="{canonical}">
+<meta property="og:image" content="''' + OG_IMAGE + '''">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{title}">
+<meta name="twitter:description" content="{description}">
+<meta name="twitter:image" content="''' + OG_IMAGE + '''">
+<!-- Security -->
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<!-- Favicons -->
+<link rel="icon" type="image/png" sizes="192x192" href="img/logo.png">
+<link rel="apple-touch-icon" href="img/logo.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1a1c20">
+<!-- Preconnect -->
+<link rel="dns-prefetch" href="https://api.web3forms.com">
+<link rel="preconnect" href="https://api.web3forms.com" crossorigin>
+<link rel="dns-prefetch" href="https://yandex.ru">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -106,6 +137,7 @@ FOOTER = '''<footer class="site-footer">
     <div class="footer-bottom">
       <span>© 2020–{year} ООО ИСК «КА-Строй». Все права защищены.</span>
       <span>Сайт носит информационный характер и не является публичной офертой (ст. 437 ГК РФ).</span>
+      <span><a href="privacy.html" style="color:var(--text-3);text-decoration:underline">Политика конфиденциальности</a></span>
     </div>
   </div>
 </footer>
@@ -133,7 +165,8 @@ FOOTER = '''<footer class="site-footer">
     </form>
   </div>
 </div>
-<script src="js/main.js"></script>
+<script src="js/main.js" defer></script>
+{jsonld}
 </body>
 </html>
 '''
@@ -214,6 +247,109 @@ SITEMAP_META = {
 }
 
 
+def build_jsonld(page: str) -> str:
+    """Return a <script type="application/ld+json"> block with Schema.org data."""
+    base = SITE_URL.rstrip('/')
+
+    org = {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "@id": base + "/#organization",
+        "name": "ООО ИСК «КА-Строй»",
+        "alternateName": "КА-Строй",
+        "url": base,
+        "logo": base + "/img/logo.png",
+        "image": base + "/img/og-cover.jpg",
+        "description": "Производство асфальта, строительство и ремонт дорог, "
+                       "благоустройство, аренда спецтехники в Новосибирске.",
+        "telephone": "+7 (383) 311-02-02",
+        "email": "ka-stroy54@bk.ru",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "ул. 1-ая Грузинская, 32/1",
+            "addressLocality": "Новосибирск",
+            "addressRegion": "Новосибирская область",
+            "postalCode": "630040",
+            "addressCountry": "RU",
+        },
+        "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 55.1197,
+            "longitude": 82.9255,
+        },
+        "openingHoursSpecification": [
+            {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": ["Monday", "Tuesday", "Wednesday",
+                              "Thursday", "Friday"],
+                "opens": "09:00",
+                "closes": "18:00",
+            },
+        ],
+        "sameAs": [],
+        "priceRange": "₽₽",
+        "areaServed": {
+            "@type": "GeoCircle",
+            "geoMidpoint": {
+                "@type": "GeoCoordinates",
+                "latitude": 55.0084,
+                "longitude": 82.9357,
+            },
+            "geoRadius": "150000",
+        },
+    }
+
+    if page == 'index.html':
+        website = {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "КА-Строй",
+            "url": base,
+            "inLanguage": "ru",
+        }
+        data = [org, website]
+    else:
+        data = [org]
+
+    blob = json.dumps(data, ensure_ascii=False, separators=(',', ':'))
+    return f'<script type="application/ld+json">{blob}</script>'
+
+
+def minify_css(css: str) -> str:
+    """CSS minification: remove comments, collapse whitespace, trim around tokens."""
+    css = re.sub(r'/\*.*?\*/', '', css, flags=re.DOTALL)
+    css = re.sub(r'\n+', '\n', css)
+    lines = []
+    for line in css.split('\n'):
+        stripped = line.strip()
+        if stripped:
+            lines.append(stripped)
+    css = ' '.join(lines)
+    css = re.sub(r'\s*([{}:;,>~+!])\s*', r'\1', css)
+    css = re.sub(r';\s*}', '}', css)
+    css = re.sub(r'\s*\(\s*', '(', css)
+    css = re.sub(r'\s*\)\s*', ')', css)
+    css = re.sub(r'\s+', ' ', css)
+    return css.strip()
+
+
+def minify_js(js: str) -> str:
+    """Basic JS minification: remove single-line comments, collapse whitespace.
+
+    Preserves string literals and regex patterns as much as possible.
+    """
+    lines = js.split('\n')
+    out = []
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith('//'):
+            continue
+        out.append(stripped)
+    result = ' '.join(out)
+    result = re.sub(r' {2,}', ' ', result)
+    return result.strip()
+
+
 def mark_active(html: str, current_page: str) -> str:
     """Add ``is-active`` to the header nav link pointing at ``current_page``.
 
@@ -265,25 +401,47 @@ def build() -> None:
         shutil.rmtree(DIST)
     os.makedirs(DIST)
 
-    # Static assets
+    # Static assets — minify CSS and JS
     css_dir = os.path.join(DIST, 'css')
     js_dir = os.path.join(DIST, 'js')
     os.makedirs(css_dir, exist_ok=True)
     os.makedirs(js_dir, exist_ok=True)
-    shutil.copy2(os.path.join(ROOT, 'style.css'), os.path.join(css_dir, 'style.css'))
-    shutil.copy2(os.path.join(ROOT, 'main.js'), os.path.join(js_dir, 'main.js'))
+
+    with open(os.path.join(ROOT, 'style.css'), encoding='utf-8') as f:
+        raw_css = f.read()
+    minified_css = minify_css(raw_css)
+    with open(os.path.join(css_dir, 'style.css'), 'w', encoding='utf-8') as f:
+        f.write(minified_css)
+    savings_css = 100 - len(minified_css) * 100 // len(raw_css)
+    print(f'Minified CSS: {len(raw_css)} → {len(minified_css)} bytes (−{savings_css}%)')
+
+    with open(os.path.join(ROOT, 'main.js'), encoding='utf-8') as f:
+        raw_js = f.read()
+    minified_js = minify_js(raw_js)
+    with open(os.path.join(js_dir, 'main.js'), 'w', encoding='utf-8') as f:
+        f.write(minified_js)
+    savings_js = 100 - len(minified_js) * 100 // len(raw_js)
+    print(f'Minified JS:  {len(raw_js)} → {len(minified_js)} bytes (−{savings_js}%)')
+
     copy_tree(os.path.join(ROOT, 'img'), os.path.join(DIST, 'img'))
 
     year = datetime.datetime.now().year
+    base = SITE_URL.rstrip('/')
 
     for out_name, meta in PAGES.items():
         body_path = os.path.join(ROOT, meta['body'])
         with open(body_path, encoding='utf-8') as f:
             body = f.read()
-        html = HEAD.format(title=meta['title'], description=meta['description'])
+        canonical = base + '/' + out_name
+        jsonld = build_jsonld(out_name)
+        html = HEAD.format(
+            title=meta['title'],
+            description=meta['description'],
+            canonical=canonical,
+        )
         html += HEADER
         html += body
-        html += FOOTER.format(year=year)
+        html += FOOTER.format(year=year, jsonld=jsonld)
         html = mark_active(html, out_name)
         with open(os.path.join(DIST, out_name), 'w', encoding='utf-8') as f:
             f.write(html)
@@ -296,6 +454,18 @@ def build() -> None:
     # ── Generate robots.txt ──────────────────────────────────────────────────
     generate_robots()
     print('Built dist/robots.txt')
+
+    # ── Generate manifest.json (PWA) ─────────────────────────────────────────
+    generate_manifest()
+    print('Built dist/manifest.json')
+
+    # ── Generate 404 page ────────────────────────────────────────────────────
+    generate_404(year)
+    print('Built dist/404.html')
+
+    # ── Generate privacy policy ──────────────────────────────────────────────
+    generate_privacy(year, base)
+    print('Built dist/privacy.html')
 
     print(f'\nDone. Static site is in: {DIST}')
     print('Preview locally: python3 -m http.server -d dist 8080')
@@ -400,6 +570,132 @@ Sitemap: {base}/sitemap.xml
 
     with open(os.path.join(DIST, 'robots.txt'), 'w', encoding='utf-8') as f:
         f.write(content)
+
+
+def generate_manifest() -> None:
+    """Generate a PWA manifest.json."""
+    manifest = {
+        "name": "КА-Строй — дорожное строительство",
+        "short_name": "КА-Строй",
+        "description": "Производство асфальта, строительство и ремонт дорог в Новосибирске",
+        "start_url": "/",
+        "display": "standalone",
+        "background_color": "#1a1c20",
+        "theme_color": "#1a1c20",
+        "lang": "ru",
+        "icons": [
+            {
+                "src": "img/logo.png",
+                "sizes": "192x192",
+                "type": "image/png",
+            },
+        ],
+    }
+    with open(os.path.join(DIST, 'manifest.json'), 'w', encoding='utf-8') as f:
+        json.dump(manifest, f, ensure_ascii=False, indent=2)
+
+
+def generate_404(year: int) -> None:
+    """Generate a custom 404 page."""
+    base = SITE_URL.rstrip('/')
+    html = f'''<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Страница не найдена — КА-Строй</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" type="image/png" sizes="192x192" href="img/logo.png">
+<link rel="stylesheet" href="css/style.css">
+<meta name="theme-color" content="#1a1c20">
+</head>
+<body>
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:40px 20px">
+  <div>
+    <div style="font-size:120px;font-weight:900;color:var(--orange);line-height:1">404</div>
+    <h1 style="font-size:28px;color:#fff;margin:20px 0 12px">Страница не найдена</h1>
+    <p style="color:var(--text-2);font-size:16px;margin-bottom:32px;max-width:440px">Такой страницы не существует или она была удалена.<br>Проверьте адрес или вернитесь на главную.</p>
+    <a class="btn btn--primary" href="index.html">На главную</a>
+  </div>
+</div>
+</body>
+</html>'''
+    with open(os.path.join(DIST, '404.html'), 'w', encoding='utf-8') as f:
+        f.write(html)
+
+
+def generate_privacy(year: int, base: str) -> None:
+    """Generate the privacy policy page."""
+    canonical = base + '/privacy.html'
+    jsonld = build_jsonld('privacy.html')
+    html = HEAD.format(
+        title='Политика конфиденциальности — КА-Строй',
+        description='Политика обработки персональных данных ООО ИСК «КА-Строй». '
+                    'Информация о сборе, хранении и использовании данных.',
+        canonical=canonical,
+    )
+    html += HEADER
+    html += f'''
+<section class="page-hero">
+  <div class="container page-hero__inner">
+    <div class="breadcrumbs"><a href="index.html">Главная</a><span>›</span>Политика конфиденциальности</div>
+    <span class="eyebrow">Документ</span>
+    <h1 class="page-hero__title">Политика <b>конфиденциальности</b></h1>
+  </div>
+</section>
+<section class="section">
+  <div class="container">
+    <div class="text-block" style="max-width:860px">
+      <h2 class="h3" style="margin-bottom:14px">1. Общие положения</h2>
+      <p>Настоящая Политика конфиденциальности определяет порядок обработки и защиты персональных данных пользователей сайта <a href="{base}" style="color:var(--orange)">{base}</a> (далее — Сайт), принадлежащего ООО ИСК «КА-Строй» (далее — Оператор).</p>
+      <p>Оператор: ООО ИСК «КА-Строй», г. Новосибирск, ул. 1-ая Грузинская, 32/1, 630040.<br>E-mail: <a href="mailto:ka-stroy54@bk.ru" style="color:var(--orange)">ka-stroy54@bk.ru</a>, тел. +7 (383) 311-02-02.</p>
+
+      <h2 class="h3" style="margin:28px 0 14px">2. Какие данные мы собираем</h2>
+      <p>Через формы обратной связи и заказа звонка на Сайте мы можем запрашивать:</p>
+      <ul style="margin:10px 0 10px 20px;color:var(--text-2);list-style:disc">
+        <li>Имя (как к вам обращаться)</li>
+        <li>Номер телефона</li>
+        <li>Адрес электронной почты (при наличии)</li>
+        <li>Текст сообщения / комментарий</li>
+      </ul>
+      <p>Мы не собираем данные банковских карт, паспортные данные и иную чувствительную информацию через Сайт.</p>
+
+      <h2 class="h3" style="margin:28px 0 14px">3. Цели обработки</h2>
+      <p>Персональные данные обрабатываются исключительно для:</p>
+      <ul style="margin:10px 0 10px 20px;color:var(--text-2);list-style:disc">
+        <li>Обратной связи с пользователем (звонок, письмо)</li>
+        <li>Подготовки коммерческого предложения или сметы</li>
+        <li>Улучшения качества обслуживания</li>
+      </ul>
+
+      <h2 class="h3" style="margin:28px 0 14px">4. Передача данных третьим лицам</h2>
+      <p>Отправка форм осуществляется через сервис <b style="color:#fff">Web3Forms</b>. Данные передаются на серверы Web3Forms для пересылки на e-mail Оператора. Мы не передаём ваши данные иным третьим лицам, за исключением случаев, предусмотренных законодательством РФ.</p>
+
+      <h2 class="h3" style="margin:28px 0 14px">5. Хранение и защита данных</h2>
+      <p>Персональные данные хранятся на электронной почте Оператора и удаляются по завершении цели обработки или по запросу субъекта данных. Оператор принимает необходимые организационные и технические меры для защиты данных от несанкционированного доступа.</p>
+
+      <h2 class="h3" style="margin:28px 0 14px">6. Права пользователя</h2>
+      <p>Вы вправе:</p>
+      <ul style="margin:10px 0 10px 20px;color:var(--text-2);list-style:disc">
+        <li>Запросить информацию о хранящихся данных</li>
+        <li>Потребовать их изменения или удаления</li>
+        <li>Отозвать согласие на обработку</li>
+      </ul>
+      <p>Для этого направьте запрос на <a href="mailto:ka-stroy54@bk.ru" style="color:var(--orange)">ka-stroy54@bk.ru</a> или позвоните по тел. +7 (383) 311-02-02.</p>
+
+      <h2 class="h3" style="margin:28px 0 14px">7. Файлы cookie</h2>
+      <p>Сайт может использовать файлы cookie для корректной работы и сбора анонимной статистики посещаемости. Вы можете отключить cookie в настройках браузера.</p>
+
+      <h2 class="h3" style="margin:28px 0 14px">8. Изменения</h2>
+      <p>Оператор оставляет за собой право обновлять настоящую Политику. Актуальная версия всегда доступна на данной странице.</p>
+      <p style="margin-top:20px;color:var(--text-3)">Дата последнего обновления: {datetime.date.today().strftime("%d.%m.%Y")}</p>
+    </div>
+  </div>
+</section>
+'''
+    html += FOOTER.format(year=year, jsonld=jsonld)
+    with open(os.path.join(DIST, 'privacy.html'), 'w', encoding='utf-8') as f:
+        f.write(html)
 
 
 if __name__ == '__main__':

@@ -359,7 +359,7 @@ button{cursor:pointer;border:0;background:none}
 .card--bg .card__bg{position:absolute;inset:0;background-size:cover;background-position:center;z-index:0;transition:transform .45s ease}
 .card--bg .card__bg::after{content:"";position:absolute;inset:0;background:linear-gradient(160deg,rgba(20,22,26,.62),rgba(10,12,16,.78))}
 .card--bg:hover .card__bg{transform:scale(1.07)}
-.card--bg .card__icon,.card--bg .card__title,.card--bg .card__text{position:relative;z-index:1}
+.card--bg .card__icon,.card--bg .card__title,.card--bg .card__text,.card--bg .card__cta{position:relative;z-index:1}
  
 /* offers cards */
 .offer{

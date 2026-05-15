@@ -57,8 +57,9 @@ HEAD = '''<!doctype html>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://api.web3forms.com; frame-src https://yandex.ru https://api-maps.yandex.ru; object-src 'none'; base-uri 'self'; form-action 'self' https://api.web3forms.com;">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <!-- Favicons -->
-<link rel="icon" type="image/png" sizes="192x192" href="img/logo.png">
-<link rel="apple-touch-icon" href="img/logo.png">
+<link rel="icon" href="img/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="192x192" href="img/favicon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1a1c20">
 <!-- Preconnect -->
@@ -306,7 +307,10 @@ def build_jsonld(page: str) -> str:
                 "closes": "18:00",
             },
         ],
-        "sameAs": [],
+        "sameAs": [
+            "https://yandex.ru/maps/org/ka_stroy/94561180941/",
+            "https://2gis.ru/novosibirsk/firm/70000001063534704",
+        ],
         "priceRange": "₽₽",
         "areaServed": {
             "@type": "GeoCircle",
@@ -515,6 +519,10 @@ def build() -> None:
 
     copy_tree(os.path.join(ROOT, 'img'), os.path.join(DIST, 'img'))
 
+    # Copy favicon.ico to the site root (browsers request /favicon.ico)
+    shutil.copy2(os.path.join(ROOT, 'img', 'favicon.ico'),
+                 os.path.join(DIST, 'favicon.ico'))
+
     year = datetime.datetime.now().year
     base = SITE_URL.rstrip('/')
 
@@ -675,8 +683,13 @@ def generate_manifest() -> None:
         "lang": "ru",
         "icons": [
             {
-                "src": "img/logo.png",
+                "src": "img/favicon-192.png",
                 "sizes": "192x192",
+                "type": "image/png",
+            },
+            {
+                "src": "img/favicon-512.png",
+                "sizes": "512x512",
                 "type": "image/png",
             },
         ],
@@ -695,7 +708,8 @@ def generate_404(year: int) -> None:
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Страница не найдена — КА-Строй</title>
 <meta name="robots" content="noindex,nofollow">
-<link rel="icon" type="image/png" sizes="192x192" href="img/logo.png">
+<link rel="icon" href="img/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="192x192" href="img/favicon-192.png">
 <link rel="stylesheet" href="css/style.css">
 <meta name="theme-color" content="#1a1c20">
 </head>

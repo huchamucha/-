@@ -323,7 +323,7 @@ def build_jsonld(page: str) -> str:
         },
     }
 
-    # BreadcrumbList
+    # BreadcrumbList — homepage is the root URL, not /index.html
     crumbs = BREADCRUMBS.get(page, [('Главная', 'index.html')])
     breadcrumb = {
         "@context": "https://schema.org",
@@ -333,7 +333,7 @@ def build_jsonld(page: str) -> str:
                 "@type": "ListItem",
                 "position": i + 1,
                 "name": name,
-                "item": base + '/' + url,
+                "item": base + '/' if url == 'index.html' else base + '/' + url,
             }
             for i, (name, url) in enumerate(crumbs)
         ],
@@ -530,7 +530,8 @@ def build() -> None:
         body_path = os.path.join(ROOT, meta['body'])
         with open(body_path, encoding='utf-8') as f:
             body = f.read()
-        canonical = base + '/' + out_name
+        # Use root URL for the homepage canonical / og:url
+        canonical = base + '/' if out_name == 'index.html' else base + '/' + out_name
         jsonld = build_jsonld(out_name)
         html = HEAD.format(
             title=meta['title'],
@@ -552,6 +553,10 @@ def build() -> None:
     # ── Generate robots.txt ──────────────────────────────────────────────────
     generate_robots()
     print('Built dist/robots.txt')
+
+    # ── Generate .htaccess (Apache: 301 redirects, headers, cache) ───────────
+    generate_htaccess()
+    print('Built dist/.htaccess')
 
     # ── Generate manifest.json (PWA) ─────────────────────────────────────────
     generate_manifest()
@@ -598,7 +603,8 @@ def generate_sitemap() -> None:
 
     for page in ordered:
         meta = SITEMAP_META.get(page, {'priority': '0.5', 'changefreq': 'monthly'})
-        loc = f'{base}/{page}'
+        # Use root URL for the homepage in sitemap
+        loc = f'{base}/' if page == 'index.html' else f'{base}/{page}'
         lines.append('  <url>')
         lines.append(f'    <loc>{loc}</loc>')
         lines.append(f'    <lastmod>{today}</lastmod>')
@@ -667,6 +673,109 @@ Sitemap: {base}/sitemap.xml
 """
 
     with open(os.path.join(DIST, 'robots.txt'), 'w', encoding='utf-8') as f:
+        f.write(content)
+
+
+def generate_htaccess() -> None:
+    """Generate .htaccess for Apache (Reg.ru shared hosting).
+
+    Includes:
+    - Force HTTPS
+    - Redirect www → non-www
+    - Redirect /index.html → /
+    - Redirect legacy Reg.ru constructor URLs (no extension) → new .html paths
+    - Custom 404 page
+    - Long-term cache for static assets
+    - Compression
+    - Security headers
+    """
+    content = """# .htaccess — ka-stroy54.ru
+# Автоматически сгенерировано build.py — не редактируйте вручную.
+
+Options -Indexes
+DirectoryIndex index.html
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # 1. Force HTTPS
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # 2. Remove www
+  RewriteCond %{HTTP_HOST} ^www\\.(.+)$ [NC]
+  RewriteRule ^ https://%1%{REQUEST_URI} [L,R=301]
+
+  # 3. /index.html → /  (avoid duplicate homepage)
+  RewriteCond %{THE_REQUEST} \\s/+index\\.html[\\s?] [NC]
+  RewriteRule ^index\\.html$ / [L,R=301]
+
+  # 4. Legacy Reg.ru constructor URLs → current pages
+  RewriteRule ^about/?$                       /about.html [L,R=301]
+  RewriteRule ^contacts/?$                    /contacts.html [L,R=301]
+  RewriteRule ^contactsfortech/?$             /contacts.html [L,R=301]
+  RewriteRule ^gallery/?$                     /gallery.html [L,R=301]
+  RewriteRule ^news/?$                        /news.html [L,R=301]
+  RewriteRule ^calculator/?$                  /calculator.html [L,R=301]
+  RewriteRule ^asfalt_nsk/?$                  /asfalt_nsk.html [L,R=301]
+  RewriteRule ^arenda_techniki_nsk/?$         /arenda_techniki_nsk.html [L,R=301]
+  RewriteRule ^glavnya/?$                     / [L,R=301]
+  RewriteRule ^partners/?$                    /about.html [L,R=301]
+  RewriteRule ^laboratory/?$                  /about.html [L,R=301]
+  RewriteRule ^new-page-[0-9]+/?$             / [L,R=301]
+  RewriteRule ^page[0-9]+/?$                  / [L,R=301]
+  RewriteRule ^catalog/.*$                    /arenda_techniki_nsk.html [L,R=301]
+  RewriteRule ^item/.*$                       /arenda_techniki_nsk.html [L,R=301]
+</IfModule>
+
+# 5. Custom 404
+ErrorDocument 404 /404.html
+
+# 6. Compression
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/xml text/plain text/javascript application/javascript application/json application/xml application/rss+xml image/svg+xml font/ttf font/otf
+</IfModule>
+
+# 7. Long-term cache for static assets
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault                              "access plus 1 month"
+  ExpiresByType text/html                     "access plus 0 seconds"
+  ExpiresByType text/css                      "access plus 1 year"
+  ExpiresByType application/javascript        "access plus 1 year"
+  ExpiresByType image/webp                    "access plus 1 year"
+  ExpiresByType image/jpeg                    "access plus 1 year"
+  ExpiresByType image/png                     "access plus 1 year"
+  ExpiresByType image/svg+xml                 "access plus 1 year"
+  ExpiresByType image/x-icon                  "access plus 1 year"
+  ExpiresByType font/woff                     "access plus 1 year"
+  ExpiresByType font/woff2                    "access plus 1 year"
+  ExpiresByType application/manifest+json     "access plus 1 week"
+  ExpiresByType application/xml               "access plus 1 hour"
+</IfModule>
+
+# 8. Security headers
+<IfModule mod_headers.c>
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" "expr=%{HTTPS} == 'on'"
+  Header always set X-Content-Type-Options    "nosniff"
+  Header always set X-Frame-Options           "SAMEORIGIN"
+  Header always set Referrer-Policy           "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy        "camera=(), microphone=(), geolocation=(), payment=()"
+
+  # immutable cache for hashed/static assets
+  <FilesMatch "\\.(css|js|webp|jpg|jpeg|png|svg|ico|woff|woff2|ttf|otf)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+</IfModule>
+
+# 9. Block access to source/build files if any leak into webroot
+<FilesMatch "\\.(py|md|sh|env|gitignore|gitattributes)$">
+  Require all denied
+</FilesMatch>
+"""
+
+    with open(os.path.join(DIST, '.htaccess'), 'w', encoding='utf-8') as f:
         f.write(content)
 
 

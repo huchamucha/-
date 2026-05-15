@@ -157,7 +157,7 @@ button{cursor:pointer;border:0;background:none}
 }
 .hero--full::after{display:none}
 .hero__inner{position:relative;padding:100px 0 56px;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr);gap:42px;align-items:center;z-index:2}
-.hero--full .hero__inner{grid-template-columns:minmax(0,1.1fr) minmax(380px,520px);gap:28px;align-items:start;padding-top:64px}
+.hero--full .hero__inner{grid-template-columns:minmax(0,1.1fr) minmax(380px,520px);gap:28px;align-items:start;padding-top:64px;max-width:100%}
 .hero__inner--wide{display:grid}
 .hero__content{max-width:640px;padding:8px 0 12px}
 .hero--full .hero__content .eyebrow{color:#ff6f72;text-shadow:0 1px 6px rgba(0,0,0,.65)}
@@ -722,7 +722,7 @@ button{cursor:pointer;border:0;background:none}
 
 /* ============ RESPONSIVE ============ */
 @media (max-width:980px){
-  .hero__inner,.hero--full .hero__inner{grid-template-columns:1fr;gap:28px;padding:72px 0 36px}
+  .hero__inner,.hero--full .hero__inner{grid-template-columns:1fr!important;gap:28px;padding:72px 0 36px}
   .about-teaser-grid,.form-grid{grid-template-columns:1fr!important;gap:28px!important}
   .hero__road-bg{left:-18px;right:-18px;width:auto;top:-34px;bottom:-24px;border-radius:28px}
   .hero__title{font-size:46px}

@@ -14,6 +14,9 @@ import json
 import os
 import re
 import shutil
+import time
+
+CSS_VERSION = str(int(time.time()))
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 DIST = os.path.join(ROOT, 'dist')
@@ -66,7 +69,7 @@ HEAD = '''<!doctype html>
 <link rel="dns-prefetch" href="https://api.web3forms.com">
 <link rel="preconnect" href="https://api.web3forms.com" crossorigin>
 <link rel="dns-prefetch" href="https://yandex.ru">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=''' + CSS_VERSION + '''">
 </head>
 <body>
 '''
@@ -710,7 +713,7 @@ def generate_404(year: int) -> None:
 <meta name="robots" content="noindex,nofollow">
 <link rel="icon" href="img/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="192x192" href="img/favicon-192.png">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=''' + CSS_VERSION + '''">
 <meta name="theme-color" content="#1a1c20">
 </head>
 <body>

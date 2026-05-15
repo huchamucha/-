@@ -57,7 +57,7 @@ HEAD = '''<!doctype html>
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
 <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://api.web3forms.com; frame-src https://yandex.ru https://api-maps.yandex.ru; object-src 'none'; base-uri 'self'; form-action 'self' https://api.web3forms.com;">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://mc.yandex.ru; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://api.web3forms.com https://mc.yandex.ru; frame-src https://yandex.ru https://api-maps.yandex.ru; object-src 'none'; base-uri 'self'; form-action 'self' https://api.web3forms.com;">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <!-- Favicons -->
 <link rel="icon" href="img/favicon.ico" sizes="any">
@@ -72,6 +72,21 @@ HEAD = '''<!doctype html>
 <link rel="stylesheet" href="css/style.css?v=''' + CSS_VERSION + '''">
 </head>
 <body>
+'''
+
+YM_COUNTER = '''<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=109227963', 'ym');
+
+    ym(109227963, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/109227963" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
 '''
 
 HEADER = '''<header class="site-header">
@@ -540,6 +555,7 @@ def build() -> None:
             description=meta['description'],
             canonical=canonical,
         )
+        html += YM_COUNTER
         html += HEADER
         html += body
         html += FOOTER.format(year=year, jsonld=jsonld)
@@ -717,7 +733,7 @@ def generate_404(year: int) -> None:
 <meta name="theme-color" content="#1a1c20">
 </head>
 <body>
-<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:40px 20px">
+''' + YM_COUNTER + '''<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:40px 20px">
   <div>
     <div style="font-size:120px;font-weight:900;color:var(--orange);line-height:1">404</div>
     <h1 style="font-size:28px;color:#fff;margin:20px 0 12px">Страница не найдена</h1>

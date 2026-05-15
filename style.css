@@ -722,7 +722,7 @@ button{cursor:pointer;border:0;background:none}
 
 /* ============ RESPONSIVE ============ */
 @media (max-width:980px){
-  .hero__inner{grid-template-columns:1fr;gap:28px;padding:72px 0 36px}
+  .hero__inner,.hero--full .hero__inner{grid-template-columns:1fr;gap:28px;padding:72px 0 36px}
   .hero__road-bg{left:-18px;right:-18px;width:auto;top:-34px;bottom:-24px;border-radius:28px}
   .hero__title{font-size:46px}
   .hero__title--big{font-size:52px}

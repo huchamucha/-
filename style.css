@@ -126,7 +126,7 @@ button{cursor:pointer;border:0;background:none}
   background:radial-gradient(circle at 70% 30%,#2f343c 0%,#1a1c20 60%);
 }
 .hero--full{
-  background:url('../img/hero/road.jpg') center 38%/cover no-repeat;
+  background:url('../img/hero/road.jpg') 42% 42%/cover no-repeat;
   display:flex;flex-direction:column;
 }
 .hero--full .hero__content{
@@ -162,15 +162,16 @@ button{cursor:pointer;border:0;background:none}
   pointer-events:none;z-index:1;
 }
 .hero__inner{position:relative;padding:100px 0 56px;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr);gap:42px;align-items:center;z-index:2}
-.hero--full .hero__inner{grid-template-columns:minmax(0,1fr) minmax(420px,580px);gap:32px;align-items:start;padding-top:64px}
+.hero--full .hero__inner{grid-template-columns:minmax(0,1.1fr) minmax(380px,520px);gap:28px;align-items:start;padding-top:64px}
 .hero__inner--wide{display:grid}
 .hero__content{max-width:640px;padding:8px 0 12px}
 .hero--full .hero__content .eyebrow{color:#ff6f72;text-shadow:0 1px 6px rgba(0,0,0,.65)}
 .hero--full .hero__stats b{text-shadow:0 1px 8px rgba(0,0,0,.65)}
 .hero--full .hero__stats span{color:rgba(238,240,243,.9);text-shadow:0 1px 6px rgba(0,0,0,.7)}
 .hero--full .hero__stats{
-  gap:22px 28px;
-  padding:14px 22px;
+  flex-wrap:nowrap;
+  gap:0;
+  padding:12px 4px;
   border-radius:16px;
   background:linear-gradient(180deg,rgba(8,10,14,.78),rgba(8,10,14,.62));
   border:1px solid rgba(255,255,255,.1);
@@ -178,7 +179,10 @@ button{cursor:pointer;border:0;background:none}
   width:fit-content;
   box-shadow:0 12px 36px rgba(0,0,0,.35);
 }
-.hero--full .hero__stat{min-width:0}
+.hero--full .hero__stat{min-width:0;padding:2px 18px;border-left:1px solid rgba(255,255,255,.12)}
+.hero--full .hero__stat:first-child{border-left:none}
+.hero--full .hero__stat span{white-space:nowrap;font-size:12px}
+.hero--full .hero__stat b{font-size:22px}
 .hero--full .btn--ghost{background:rgba(20,22,26,.55);border-color:rgba(255,255,255,.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 .hero__title{font-size:64px;font-weight:900;line-height:1;letter-spacing:-.015em;margin:18px 0 22px;text-shadow:0 2px 16px rgba(0,0,0,.55)}
 .hero--full .hero__title{text-shadow:0 2px 14px rgba(0,0,0,.85),0 0 28px rgba(0,0,0,.55)}

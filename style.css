@@ -359,6 +359,13 @@ button{cursor:pointer;border:0;background:none}
 .card__cta{display:inline-flex;align-items:center;gap:6px;margin-top:18px;color:var(--orange-2);font-weight:700;font-size:14px;letter-spacing:.02em}
 .card__cta:hover{color:var(--orange-3)}
 .card__cta::after{content:"→";font-weight:400}
+
+/* card with background image */
+.card--bg{position:relative;overflow:hidden;background:none}
+.card--bg .card__bg{position:absolute;inset:0;background-size:cover;background-position:center;z-index:0;transition:transform .45s ease}
+.card--bg .card__bg::after{content:"";position:absolute;inset:0;background:linear-gradient(160deg,rgba(20,22,26,.62),rgba(10,12,16,.78))}
+.card--bg:hover .card__bg{transform:scale(1.07)}
+.card--bg .card__icon,.card--bg .card__title,.card--bg .card__text{position:relative;z-index:1}
  
 /* offers cards */
 .offer{

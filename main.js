@@ -45,7 +45,40 @@
       if(hp===path){navLinks[i].classList.add('is-active');}
     }
   }catch(e){}
- 
+
+  // Маска и валидация телефона
+  function phoneMask(input){
+    input.addEventListener('input',function(){
+      var val=input.value.replace(/\D/g,'');
+      if(val.length===0){input.value='';return;}
+      if(val[0]==='8')val='7'+val.slice(1);
+      if(val[0]!=='7')val='7'+val;
+      var out='+7';
+      if(val.length>1)out+=' ('+val.slice(1,4);
+      if(val.length>4)out+=') '+val.slice(4,7);
+      if(val.length>7)out+='-'+val.slice(7,9);
+      if(val.length>9)out+='-'+val.slice(9,11);
+      input.value=out;
+    });
+    input.addEventListener('keydown',function(e){
+      if(e.key==='Backspace'&&input.value.length<=3){
+        e.preventDefault();input.value='';
+      }
+    });
+    input.addEventListener('focus',function(){
+      if(!input.value)input.value='+7';
+    });
+    input.addEventListener('blur',function(){
+      if(input.value==='+7'||input.value==='+7 ')input.value='';
+    });
+  }
+  function isValidPhone(val){
+    var digits=val.replace(/\D/g,'');
+    return digits.length===11&&digits[0]==='7';
+  }
+  var phoneInputs=document.querySelectorAll('input[type="tel"]');
+  for(var pi=0;pi<phoneInputs.length;pi++){phoneMask(phoneInputs[pi]);}
+
   // Web3Forms — обработка отправки
   var form=document.querySelector('form[data-ks-form]');
   if(form){
@@ -54,6 +87,11 @@
     form.addEventListener('submit',function(e){
       e.preventDefault();
       if(statusEl){statusEl.className='form-status';statusEl.textContent='';}
+      var phoneField=form.querySelector('input[type="tel"]');
+      if(phoneField&&!isValidPhone(phoneField.value)){
+        if(statusEl){statusEl.className='form-status err';statusEl.textContent='Введите корректный номер телефона.';}
+        phoneField.focus();return;
+      }
       // Собираем выбранные услуги в hidden services
       var svcInputs=form.querySelectorAll('input[data-svc]:checked');
       var svc=[];for(var i=0;i<svcInputs.length;i++){svc.push(svcInputs[i].value);}
@@ -121,6 +159,11 @@
       cbForm.addEventListener('submit',function(e){
         e.preventDefault();
         if(cbStatus){cbStatus.className='callback-modal__status';cbStatus.textContent='';}
+        var cbPhone=cbForm.querySelector('input[type="tel"]');
+        if(cbPhone&&!isValidPhone(cbPhone.value)){
+          if(cbStatus){cbStatus.className='callback-modal__status err';cbStatus.textContent='Введите корректный номер телефона.';}
+          cbPhone.focus();return;
+        }
         if(cbSubmit){cbSubmit.disabled=true;cbSubmit.textContent='Отправляем…';}
         var fd=new FormData(cbForm);
         fetch(cbForm.getAttribute('action'),{

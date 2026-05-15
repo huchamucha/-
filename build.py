@@ -17,6 +17,11 @@ import shutil
 ROOT = os.path.dirname(os.path.abspath(__file__))
 DIST = os.path.join(ROOT, 'dist')
 
+# ── Site URL ────────────────────────────────────────────────────────────────
+# Used for sitemap.xml and robots.txt.  Change to the production domain once
+# the site is deployed (e.g. 'https://ka-stroy54.ru').
+SITE_URL = 'https://ka-stroy54.ru'
+
 HEAD = '''<!doctype html>
 <html lang="ru">
 <head>
@@ -191,6 +196,23 @@ PAGES = {
     },
 }
 
+# ── Sitemap metadata ───────────────────────────────────────────────────────
+# priority: 0.0–1.0 (importance relative to other pages on the site)
+# changefreq: how often the page content is expected to change
+SITEMAP_META = {
+    'index.html':                   {'priority': '1.0', 'changefreq': 'weekly'},
+    'about.html':                   {'priority': '0.8', 'changefreq': 'monthly'},
+    'asfalt_nsk.html':              {'priority': '0.9', 'changefreq': 'weekly'},
+    'service-construction.html':    {'priority': '0.8', 'changefreq': 'monthly'},
+    'service-repair.html':          {'priority': '0.8', 'changefreq': 'monthly'},
+    'service-landscaping.html':     {'priority': '0.8', 'changefreq': 'monthly'},
+    'arenda_techniki_nsk.html':     {'priority': '0.9', 'changefreq': 'weekly'},
+    'calculator.html':              {'priority': '0.7', 'changefreq': 'monthly'},
+    'gallery.html':                 {'priority': '0.6', 'changefreq': 'monthly'},
+    'news.html':                    {'priority': '0.7', 'changefreq': 'weekly'},
+    'contacts.html':                {'priority': '0.8', 'changefreq': 'yearly'},
+}
+
 
 def mark_active(html: str, current_page: str) -> str:
     """Add ``is-active`` to the header nav link pointing at ``current_page``.
@@ -267,8 +289,117 @@ def build() -> None:
             f.write(html)
         print(f'Built dist/{out_name}')
 
+    # ── Generate sitemap.xml ─────────────────────────────────────────────────
+    generate_sitemap()
+    print('Built dist/sitemap.xml')
+
+    # ── Generate robots.txt ──────────────────────────────────────────────────
+    generate_robots()
+    print('Built dist/robots.txt')
+
     print(f'\nDone. Static site is in: {DIST}')
     print('Preview locally: python3 -m http.server -d dist 8080')
+
+
+def generate_sitemap() -> None:
+    """Generate a sitemap.xml with all public pages, priorities and changefreq.
+
+    Uses the W3C date format (YYYY-MM-DD) for <lastmod> and adheres to the
+    Sitemaps 0.9 protocol (https://www.sitemaps.org/protocol.html).
+    """
+    today = datetime.date.today().isoformat()  # YYYY-MM-DD
+    base = SITE_URL.rstrip('/')
+
+    lines = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"',
+        '        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"',
+        '        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9',
+        '                            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">',
+    ]
+
+    # Order: main page first, then by descending priority, then alphabetically
+    ordered = sorted(
+        PAGES.keys(),
+        key=lambda p: (
+            0 if p == 'index.html' else 1,
+            -float(SITEMAP_META.get(p, {}).get('priority', '0.5')),
+            p,
+        ),
+    )
+
+    for page in ordered:
+        meta = SITEMAP_META.get(page, {'priority': '0.5', 'changefreq': 'monthly'})
+        loc = f'{base}/{page}'
+        lines.append('  <url>')
+        lines.append(f'    <loc>{loc}</loc>')
+        lines.append(f'    <lastmod>{today}</lastmod>')
+        lines.append(f'    <changefreq>{meta["changefreq"]}</changefreq>')
+        lines.append(f'    <priority>{meta["priority"]}</priority>')
+        lines.append('  </url>')
+
+    lines.append('</urlset>')
+    lines.append('')  # trailing newline
+
+    with open(os.path.join(DIST, 'sitemap.xml'), 'w', encoding='utf-8') as f:
+        f.write('\n'.join(lines))
+
+
+def generate_robots() -> None:
+    """Generate a robots.txt with rules for major crawlers.
+
+    Includes:
+    - Universal rules (User-agent: *)
+    - Yandex-specific directives (Host, Clean-param)
+    - Sitemap reference
+    - Disallow for service/internal paths
+    """
+    base = SITE_URL.rstrip('/')
+
+    content = f"""# robots.txt — {base}
+# Автоматически сгенерировано build.py
+
+# ── Общие правила для всех роботов ──────────────────────────────────────────
+User-agent: *
+Allow: /
+
+# Запретить индексацию служебных и внутренних страниц
+Disallow: /test-api.html
+Disallow: /test-embed.html
+Disallow: /dist/
+Disallow: /*.py$
+Disallow: /node_modules/
+Disallow: /.git/
+
+# ── Яндекс ──────────────────────────────────────────────────────────────────
+User-agent: Yandex
+Allow: /
+Disallow: /test-api.html
+Disallow: /test-embed.html
+
+# Предпочтительное зеркало
+Host: {base}
+
+# Удалять UTM- и рекламные параметры из URL при индексации
+Clean-param: utm_source&utm_medium&utm_campaign&utm_content&utm_term
+Clean-param: yclid&gclid&fbclid&from
+
+# ── Google ──────────────────────────────────────────────────────────────────
+User-agent: Googlebot
+Allow: /
+Disallow: /test-api.html
+Disallow: /test-embed.html
+
+# Разрешить индексацию изображений
+User-agent: Googlebot-Image
+Allow: /img/
+
+# ── Sitemap ─────────────────────────────────────────────────────────────────
+Sitemap: {base}/sitemap.xml
+"""
+
+    with open(os.path.join(DIST, 'robots.txt'), 'w', encoding='utf-8') as f:
+        f.write(content)
 
 
 if __name__ == '__main__':

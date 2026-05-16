@@ -124,6 +124,7 @@ FOOTER = '''<footer class="site-footer">
           <li><a href="gallery.html">Наши работы</a></li>
           <li><a href="news.html">Новости</a></li>
           <li><a href="contacts.html">Контакты</a></li>
+          <li><a href="faq.html">Вопросы и ответы</a></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -233,6 +234,11 @@ PAGES = {
         'description': 'Контакты КА-Строй: офис +7 (383) 311-02-02, аренда техники, материалы, производство работ. Адрес: г. Новосибирск, ул. 1-ая Грузинская, 32/1.',
         'body': 'page_contacts.html',
     },
+    'faq.html': {
+        'title': 'Вопросы и ответы — КА-Строй Новосибирск',
+        'description': 'Ответы на частые вопросы о дорожных работах, аренде спецтехники, материалах и условиях сотрудничества с КА-Строй в Новосибирске.',
+        'body': 'page_faq.html',
+    },
 }
 
 # ── Sitemap metadata ───────────────────────────────────────────────────────
@@ -250,6 +256,7 @@ SITEMAP_META = {
     'gallery.html':                 {'priority': '0.6', 'changefreq': 'monthly'},
     'news.html':                    {'priority': '0.7', 'changefreq': 'weekly'},
     'contacts.html':                {'priority': '0.8', 'changefreq': 'yearly'},
+    'faq.html':                      {'priority': '0.6', 'changefreq': 'monthly'},
 }
 
 
@@ -266,6 +273,7 @@ BREADCRUMBS = {
     'gallery.html': [('Главная', 'index.html'), ('Галерея работ', 'gallery.html')],
     'news.html': [('Главная', 'index.html'), ('Новости', 'news.html')],
     'contacts.html': [('Главная', 'index.html'), ('Контакты', 'contacts.html')],
+    'faq.html': [('Главная', 'index.html'), ('Вопросы и ответы', 'faq.html')],
 }
 
 

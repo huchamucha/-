@@ -67,7 +67,7 @@ HEAD = '''<!doctype html>
 <link rel="dns-prefetch" href="https://api.web3forms.com">
 <link rel="preconnect" href="https://api.web3forms.com" crossorigin>
 <link rel="dns-prefetch" href="https://yandex.ru">
-<link rel="stylesheet" href="css/style.css?v=2">
+<link rel="stylesheet" href="css/style.css?v=3">
 </head>
 <body>
 '''
@@ -171,7 +171,7 @@ FOOTER = '''<footer class="site-footer">
     </form>
   </div>
 </div>
-<script src="js/main.js?v=2" defer></script>
+<script src="js/main.js?v=3" defer></script>
 {jsonld}
 </body>
 </html>
@@ -515,12 +515,11 @@ def generate_catalog_page_body() -> str:
     # Cards grid
     cards = '<div class="tech-grid" id="tech-catalog">\n'
     for item in TECH_ITEMS:
+        tile_name = item['name'] if item['sub'] == item['name'] else f'{item["sub"]} {item["name"]}'
         cards += f'''<a class="tech-card" href="technika/{item['slug']}.html" data-category="{item['category']}">
-  <div class="tech-card__img"><img loading="lazy" src="{item['img']}" alt="{item['name']}" width="{item['img_w']}" height="{item['img_h']}"></div>
+  <div class="tech-card__img"><img loading="lazy" src="{item['img']}" alt="{tile_name}" width="{item['img_w']}" height="{item['img_h']}"></div>
   <div class="tech-card__body">
-    <div class="tech-card__sub">{item['sub']}</div>
-    <h4 class="tech-card__name">{item['name']}</h4>
-    <div class="tech-card__price">{item['price']} <span class="tech-card__min">{item['min_hours']}</span></div>
+    <h4 class="tech-card__name">{tile_name}</h4>
   </div>
 </a>
 '''
@@ -1049,7 +1048,7 @@ def generate_404(year: int) -> None:
 <meta name="robots" content="noindex,nofollow">
 <link rel="icon" href="img/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="192x192" href="img/favicon-192.png">
-<link rel="stylesheet" href="css/style.css?v=2">
+<link rel="stylesheet" href="css/style.css?v=3">
 <meta name="theme-color" content="#1a1c20">
 </head>
 <body>

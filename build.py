@@ -14,6 +14,7 @@ import json
 import os
 import re
 import shutil
+from tech_data import TECH_ITEMS, TECH_CATEGORIES
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 DIST = os.path.join(ROOT, 'dist')
@@ -409,6 +410,189 @@ def build_jsonld(page: str) -> str:
     return f'<script type="application/ld+json">{blob}</script>'
 
 
+def get_category_name(cat_id: str) -> str:
+    """Return human-readable category name by id."""
+    for c in TECH_CATEGORIES:
+        if c['id'] == cat_id:
+            return c['name']
+    return ''
+
+
+def generate_tech_page_body(item: dict) -> str:
+    """Generate HTML body content for an individual tech page."""
+    cat_name = get_category_name(item['category'])
+    # Related items from same category (exclude current)
+    related = [t for t in TECH_ITEMS
+               if t['category'] == item['category'] and t['slug'] != item['slug']]
+
+    specs_html = ''
+    for label, val in item['specs']:
+        specs_html += f'<tr><td>{label}</td><td><b>{val}</b></td></tr>\n'
+
+    related_html = ''
+    if related:
+        related_html = '<h3 class="h3" style="margin-top:48px">Похожая техника</h3>\n'
+        related_html += '<div class="tech-grid">\n'
+        for r in related[:4]:
+            related_html += f'''<a class="tech-card" href="{r['slug']}.html">
+  <div class="tech-card__img"><img loading="lazy" src="{r['img']}" alt="{r['name']}" width="{r['img_w']}" height="{r['img_h']}"></div>
+  <div class="tech-card__body">
+    <div class="tech-card__sub">{r['sub']}</div>
+    <h4 class="tech-card__name">{r['name']}</h4>
+    <div class="tech-card__price">{r['price']}</div>
+  </div>
+</a>
+'''
+        related_html += '</div>\n'
+
+    body = f'''<section class="page-hero">
+  <div class="container page-hero__inner">
+    <div class="breadcrumbs"><a href="index.html">Главная</a><span>›</span><a href="arenda_techniki_nsk.html">Аренда техники</a><span>›</span>{item['name']}</div>
+    <span class="eyebrow">{cat_name}</span>
+    <h1 class="page-hero__title">{item['sub']} <b>{item['name']}</b></h1>
+    <p class="page-hero__lead">Аренда {item['sub'].lower()} {item['name']} в Новосибирске и Новосибирской области с машинистом. Свой парк — без посредников.</p>
+    <div style="margin-top:18px;display:flex;gap:12px;flex-wrap:wrap">
+      <a class="btn btn--primary" href="contacts.html">Заказать технику</a>
+      <a class="btn btn--ghost" href="tel:+79039356049">+7 903 935-60-49</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="tech-detail">
+      <div class="tech-detail__img">
+        <img src="{item['img']}" alt="{item['name']}" width="{item['img_w']}" height="{item['img_h']}">
+      </div>
+      <div class="tech-detail__info">
+        <div class="tech-detail__price-block">
+          <span class="tech-detail__price">{item['price']}</span>
+          <span class="tech-detail__min">{item['min_hours']}</span>
+        </div>
+        <table class="tech-detail__specs">
+{specs_html}        </table>
+        <div style="margin-top:20px">
+          <a class="btn btn--primary" href="contacts.html">Оставить заявку</a>
+        </div>
+        <div class="callout" style="margin-top:16px">Промокод <b style="color:var(--orange)">«САЙТ КА-СТРОЙ»</b> — скидка −10%</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="background:var(--bg-2)">
+  <div class="container">
+    <h2 class="h2">Описание</h2>
+    <div class="tech-seo-text">
+{item['seo_text']}
+    </div>
+{related_html}
+  </div>
+</section>
+
+<section class="cta-strip">
+  <div class="container cta-strip__inner">
+    <div class="cta-strip__h">Нужна техника прямо сейчас?<br>Подадим машину на объект в течение часа.</div>
+    <div class="cta-strip__ctas">
+      <a class="btn btn--primary" href="tel:+79039356049">+7 903 935-60-49</a>
+      <a class="btn btn--ghost" href="contacts.html">Оставить заявку</a>
+    </div>
+  </div>
+</section>
+'''
+    return body
+
+
+def generate_catalog_page_body() -> str:
+    """Generate the redesigned catalog page with category nav and card grid."""
+    # Category navigation
+    cat_nav = '<div class="tech-cat-nav">\n'
+    cat_nav += '  <a class="tech-cat-nav__item is-active" href="#all" data-filter="all">Все</a>\n'
+    for cat in TECH_CATEGORIES:
+        cat_nav += f'  <a class="tech-cat-nav__item" href="#{cat["id"]}" data-filter="{cat["id"]}">{cat["name"]}</a>\n'
+    cat_nav += '</div>\n'
+
+    # Cards grid
+    cards = '<div class="tech-grid" id="tech-catalog">\n'
+    for item in TECH_ITEMS:
+        cards += f'''<a class="tech-card" href="technika/{item['slug']}.html" data-category="{item['category']}">
+  <div class="tech-card__img"><img loading="lazy" src="{item['img']}" alt="{item['name']}" width="{item['img_w']}" height="{item['img_h']}"></div>
+  <div class="tech-card__body">
+    <div class="tech-card__sub">{item['sub']}</div>
+    <h4 class="tech-card__name">{item['name']}</h4>
+    <div class="tech-card__price">{item['price']} <span class="tech-card__min">{item['min_hours']}</span></div>
+  </div>
+</a>
+'''
+    cards += '</div>\n'
+
+    body = f'''<section class="page-hero">
+  <div class="container page-hero__inner">
+    <div class="breadcrumbs"><a href="index.html">Главная</a><span>›</span>Аренда спецтехники</div>
+    <span class="eyebrow">Свой парк · С машинистом · Без посредников</span>
+    <h1 class="page-hero__title">Аренда <b>спецтехники</b> в Новосибирске</h1>
+    <p class="page-hero__lead">Сдаём в аренду собственную дорожно-строительную и землеройную технику в Новосибирске и Новосибирской области. По промокоду <b style="color:#fff">«САЙТ КА-СТРОЙ» — скидка −10%</b> на любую технику из каталога.</p>
+    <div style="margin-top:18px;display:flex;gap:12px;flex-wrap:wrap">
+      <a class="btn btn--primary" href="contacts.html">Заказать технику</a>
+      <a class="btn btn--ghost" href="tel:+79039356049">+7 903 935-60-49</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <span class="eyebrow">Каталог</span>
+    <h2 class="h2">Землеройная и дорожно-строительная техника</h2>
+    <p class="lead" style="margin-bottom:26px">Стоимость указана за 1 час работы (НДС 22% включён). Нажмите на карточку для подробных характеристик. Доставка рассчитывается отдельно.</p>
+    {cat_nav}
+    {cards}
+  </div>
+</section>
+
+<section class="section" style="background:var(--bg-2)">
+  <div class="container">
+    <span class="eyebrow">Условия аренды</span>
+    <h2 class="h2">Как заказать технику</h2>
+    <div class="grid-4" style="margin-top:18px">
+      <div class="card"><div class="card__icon">1</div><div class="card__title">Заявка</div><div class="card__text">Позвоните +7 903 935-60-49 или оставьте заявку на сайте — уточним технику, объём и сроки.</div></div>
+      <div class="card"><div class="card__icon">2</div><div class="card__title">Расчёт</div><div class="card__text">Подберём оптимальный вариант, рассчитаем стоимость смены с учётом скидки по промокоду.</div></div>
+      <div class="card"><div class="card__icon">3</div><div class="card__title">Договор</div><div class="card__text">Заключаем договор аренды, фиксируем сроки, режим работы, ответственность сторон.</div></div>
+      <div class="card"><div class="card__icon">4</div><div class="card__title">Подача</div><div class="card__text">Подача техники с машинистом на объект — от 1 часа в черте Новосибирска.</div></div>
+    </div>
+    <div class="callout" style="margin-top:24px">Промокод <b style="color:var(--orange)">«САЙТ КА-СТРОЙ»</b> даёт скидку −10% на любую технику из каталога. Сообщите его менеджеру при оформлении заявки.</div>
+  </div>
+</section>
+
+<section class="cta-strip">
+  <div class="container cta-strip__inner">
+    <div class="cta-strip__h">Нужна техника прямо сейчас?<br>Подадим машину на объект в течение часа.</div>
+    <div class="cta-strip__ctas">
+      <a class="btn btn--primary" href="tel:+79039356049">+7 903 935-60-49</a>
+      <a class="btn btn--ghost" href="contacts.html">Оставить заявку</a>
+    </div>
+  </div>
+</section>
+'''
+    return body
+
+
+def register_tech_pages():
+    """Add tech pages to PAGES, SITEMAP_META, BREADCRUMBS dynamically."""
+    for item in TECH_ITEMS:
+        page_file = f'technika/{item["slug"]}.html'
+        PAGES[page_file] = {
+            'title': item['seo_title'],
+            'description': item['seo_desc'],
+            'body': '__generated__',
+        }
+        SITEMAP_META[page_file] = {'priority': '0.7', 'changefreq': 'monthly'}
+        BREADCRUMBS[page_file] = [
+            ('Главная', 'index.html'),
+            ('Аренда техники', 'arenda_techniki_nsk.html'),
+            (item['name'], page_file),
+        ]
+
+
 def minify_css(css: str) -> str:
     """CSS minification: remove comments, collapse whitespace, trim around tokens."""
     css = re.sub(r'/\*.*?\*/', '', css, flags=re.DOTALL)
@@ -490,10 +674,31 @@ def copy_tree(src: str, dst: str) -> None:
     shutil.copytree(src, dst)
 
 
+def prefix_paths(html: str, prefix: str) -> str:
+    """Prefix relative asset paths (img, css, js, manifest, href) for subdirectory pages."""
+    # Fix src="img/...", src="css/...", src="js/..."
+    html = re.sub(r'(src|href)="(img|css|js|manifest)/', rf'\1="{prefix}\2/', html)
+    # Fix href to root-level HTML pages only (known site pages, not sibling files)
+    root_pages = set(p for p in PAGES if '/' not in p) | {'privacy.html', '404.html'}
+    def _fix_href(m):
+        fname = m.group(1)
+        if fname in root_pages:
+            return f'href="{prefix}{fname}"'
+        return m.group(0)
+    html = re.sub(r'href="([a-z][a-z0-9_-]*\.html)"', _fix_href, html)
+    return html
+
+
 def build() -> None:
+    # Register dynamically generated tech pages
+    register_tech_pages()
+
     if os.path.exists(DIST):
         shutil.rmtree(DIST)
     os.makedirs(DIST)
+
+    # Create technika/ subdirectory
+    os.makedirs(os.path.join(DIST, 'technika'), exist_ok=True)
 
     # Static assets — minify CSS and JS
     css_dir = os.path.join(DIST, 'css')
@@ -526,10 +731,25 @@ def build() -> None:
     year = datetime.datetime.now().year
     base = SITE_URL.rstrip('/')
 
+    # Build a lookup for tech items by slug
+    tech_by_slug = {item['slug']: item for item in TECH_ITEMS}
+
     for out_name, meta in PAGES.items():
-        body_path = os.path.join(ROOT, meta['body'])
-        with open(body_path, encoding='utf-8') as f:
-            body = f.read()
+        is_subdir = '/' in out_name  # e.g. technika/slug.html
+
+        # Get body content
+        if meta['body'] == '__generated__':
+            # Tech detail page — generate from data
+            slug = out_name.replace('technika/', '').replace('.html', '')
+            body = generate_tech_page_body(tech_by_slug[slug])
+        elif out_name == 'arenda_techniki_nsk.html':
+            # Catalog page — generate from function
+            body = generate_catalog_page_body()
+        else:
+            body_path = os.path.join(ROOT, meta['body'])
+            with open(body_path, encoding='utf-8') as f:
+                body = f.read()
+
         # Use root URL for the homepage canonical / og:url
         canonical = base + '/' if out_name == 'index.html' else base + '/' + out_name
         jsonld = build_jsonld(out_name)
@@ -541,8 +761,18 @@ def build() -> None:
         html += HEADER
         html += body
         html += FOOTER.format(year=year, jsonld=jsonld)
-        html = mark_active(html, out_name)
-        with open(os.path.join(DIST, out_name), 'w', encoding='utf-8') as f:
+
+        # For subdirectory pages, prefix relative paths with ../
+        if is_subdir:
+            html = prefix_paths(html, '../')
+            # Mark arenda_techniki_nsk.html as active in nav for tech pages
+            html = mark_active(html, 'arenda_techniki_nsk.html')
+        else:
+            html = mark_active(html, out_name)
+
+        out_path = os.path.join(DIST, out_name)
+        os.makedirs(os.path.dirname(out_path), exist_ok=True)
+        with open(out_path, 'w', encoding='utf-8') as f:
             f.write(html)
         print(f'Built dist/{out_name}')
 

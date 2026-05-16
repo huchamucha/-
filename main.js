@@ -239,4 +239,26 @@
       calcResult();
     }
   }
+
+  // Tech catalog category filter
+  var catNav=document.querySelector('.tech-cat-nav');
+  var catalog=document.getElementById('tech-catalog');
+  if(catNav&&catalog){
+    var cards=catalog.querySelectorAll('.tech-card');
+    catNav.addEventListener('click',function(e){
+      var btn=e.target.closest('.tech-cat-nav__item');
+      if(!btn)return;
+      e.preventDefault();
+      var filter=btn.getAttribute('data-filter');
+      catNav.querySelectorAll('.tech-cat-nav__item').forEach(function(b){b.classList.remove('is-active')});
+      btn.classList.add('is-active');
+      cards.forEach(function(card){
+        if(filter==='all'||card.getAttribute('data-category')===filter){
+          card.hidden=false;
+        }else{
+          card.hidden=true;
+        }
+      });
+    });
+  }
 })();

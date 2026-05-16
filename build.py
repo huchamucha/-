@@ -67,7 +67,7 @@ HEAD = '''<!doctype html>
 <link rel="dns-prefetch" href="https://api.web3forms.com">
 <link rel="preconnect" href="https://api.web3forms.com" crossorigin>
 <link rel="dns-prefetch" href="https://yandex.ru">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=2">
 </head>
 <body>
 '''
@@ -171,7 +171,7 @@ FOOTER = '''<footer class="site-footer">
     </form>
   </div>
 </div>
-<script src="js/main.js" defer></script>
+<script src="js/main.js?v=2" defer></script>
 {jsonld}
 </body>
 </html>
@@ -1049,7 +1049,7 @@ def generate_404(year: int) -> None:
 <meta name="robots" content="noindex,nofollow">
 <link rel="icon" href="img/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="192x192" href="img/favicon-192.png">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=2">
 <meta name="theme-color" content="#1a1c20">
 </head>
 <body>

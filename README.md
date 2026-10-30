@@ -1,84 +1,124 @@
-# Сайт ООО ИСК «КА-Строй»
+# КА-Строй + LM Studio local AI
 
-Статический сайт компании (Новосибирск) — производство асфальта, дорожные работы, благоустройство, аренда спецтехники. Сайт собирается одним Python-скриптом и публикуется через любой обычный хостинг (FTP, S3, Netlify, Cloudflare Pages и т. п.).
+Это репозиторий сайта ООО ИСК «КА-Строй» и локального AI-модуля под LM Studio.
 
-## Структура репозитория
+Что сделано:
+- сохранён исходный статический сайт в корне репозитория;
+- добавлена локальная Python-обвязка для LM Studio/OpenAI-compatible API;
+- добавлен тестовый сценарий для запуска модели через LM Studio;
+- подготовлена документация для локального запуска и проверки.
 
+Структура:
+
+```text
+.
+├── app.py                 # Flask API, который вызывает LM Studio
+├── lmstudio_client.py     # HTTP-клиент к /v1/chat/completions
+├── test_lmstudio.py       # быстрый smoke test
+├── requirements.txt       # зависимости
+├── .env.example           # переменные окружения
+├── build.py               # сборка статического сайта в dist/
+├── page_*.html            # body-части страниц
+├── style.css              # стили сайта
+├── main.js                # frontend JS
+├── img/                   # статические ресурсы
+├── README.md              # документация
+└── dist/                  # создаётся build.py
 ```
-build.py              # сборка сайта в dist/
-page_index.html       # body главной
-page_about.html
-page_asfalt.html      # «Прайс-лист»
-page_arenda.html
-page_calculator.html  # калькулятор полной сметы
-page_gallery.html     # «Галерея работ»
-page_news.html
-page_contacts.html
-style.css             # общие стили
-main.js               # мобильное меню, форма Web3Forms
-img/                  # логотип и фото галереи
-dist/                 # результат сборки (создаётся build.py)
-```
 
-Каждый `page_*.html` — это только тело страницы. Общая шапка, подвал, мета-теги и подключение CSS/JS добавляются автоматически из `build.py`.
+Коротко про новую задачу:
+- сайт остаётся как основной проект;
+- отдельный backend готов для локального LLM через LM Studio;
+- можно быстро проверять промпты, парсить JSON и прототипировать AI-часть без Ollama/PowerShell-порчей.
 
-## Сборка
+## Быстрый старт
+
+1. Установи LM Studio.
+2. Загрузите модель (например, Qwen 2.5 7B/14B или любую подходящую локальную модель).
+3. Включите Local Server в LM Studio.
+4. Обычно это даст endpoint:
+   - `http://localhost:1234/v1/chat/completions`
+   - `Authorization: Bearer lm-studio`
+5. Создай виртуальное окружение и установи зависимости:
 
 ```bash
-python3 build.py
+python -m venv .venv
+. .venv/bin/activate  # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
 ```
 
-Скрипт:
-- очищает каталог `dist/`;
-- копирует `style.css` в `dist/css/`, `main.js` в `dist/js/`, всё содержимое `img/` в `dist/img/`;
-- собирает каждую страницу: `<head>` + `<header>` + тело `page_*.html` + `<footer>`;
-- помечает класс `is-active` у пункта меню, соответствующего текущей странице;
-- подставляет текущий год в копирайт футера.
-
-Зависимостей нет — только стандартная библиотека Python 3.
-
-## Локальный предпросмотр
+6. Запусти API:
 
 ```bash
-python3 -m http.server -d dist 8080
+python app.py
 ```
 
-Откройте `http://localhost:8080/`.
+7. Проверь health:
 
-## Деплой
+```bash
+curl http://localhost:5000/api/health
+```
 
-Сайт полностью статический. После сборки достаточно загрузить содержимое `dist/` в корень хостинга:
+8. Проверь AI:
 
-- **Обычный shared-хостинг** — загрузите все файлы из `dist/` по FTP/SFTP в корневую папку сайта (обычно `public_html/` или `www/`).
-- **Netlify / Cloudflare Pages / Vercel** — укажите команду сборки `python3 build.py` и публикуемый каталог `dist`.
-- **S3 / Yandex Object Storage** — синхронизируйте `dist/` с бакетом и включите статический хостинг (index document: `index.html`).
-- **GitHub Pages** — соберите локально и закоммитьте `dist/` в ветку `gh-pages` (или используйте Action c `python3 build.py`).
+```bash
+curl -X POST http://localhost:5000/api/ask \
+  -H "Content-Type: application/json" \
+  -d '{"prompt":"Напиши одно слово: ok"}'
+```
 
-Пути внутри собранных страниц — относительные (`css/style.css`, `js/main.js`, `img/...`), поэтому сайт работает в любой подпапке хостинга без изменений.
+## Переменные окружения
 
-## Страницы
+Скопируй `.env.example` в `.env` и настрой:
 
-| URL | Заголовок в меню | Источник тела |
-|-----|------------------|---------------|
-| `index.html` | Главная | `page_index.html` |
-| `about.html` | О компании | `page_about.html` |
-| `asfalt_nsk.html` | Прайс-лист | `page_asfalt.html` |
-| `arenda_techniki_nsk.html` | Аренда техники | `page_arenda.html` |
-| `calculator.html` | Калькулятор | `page_calculator.html` |
-| `gallery.html` | Галерея работ | `page_gallery.html` |
-| `news.html` | Новости | `page_news.html` |
-| `contacts.html` | Контакты | `page_contacts.html` |
+```env
+LMSTUDIO_BASE_URL=http://localhost:1234/v1
+LMSTUDIO_API_KEY=lm-studio
+LMSTUDIO_MODEL=local-model
+FLASK_HOST=0.0.0.0
+FLASK_PORT=5000
+```
 
-## Изменение контента
+## Пример ответа API
 
-- **Текст/блоки конкретной страницы** — `page_*.html`.
-- **Шапка/футер/мета-теги** — константы `HEAD`, `HEADER`, `FOOTER` в `build.py`.
-- **Список страниц, заголовки, описания** — словарь `PAGES` в `build.py`.
-- **Общие стили** — `style.css`.
-- **JS (моб. меню, форма)** — `main.js`.
+```json
+{
+  "ok": true,
+  "model": "local-model",
+  "response": "ok"
+}
+```
 
-После любых правок: `python3 build.py` → `dist/` обновлён → выкладываем на хостинг.
+## Тестовый сценарий
 
-## Формы
+```bash
+python test_lmstudio.py
+```
 
-Контактная форма на `contacts.html` и заявка на главной используют [Web3Forms](https://web3forms.com) с публичным `access_key`, лежащим в `main.js`. Сообщения уходят на e-mail, заданный в кабинете Web3Forms.
+Этот скрипт отправляет простой запрос в LM Studio и печатает результат.
+
+## Сборка статического сайта
+
+Если нужно собрать статический сайт:
+
+```bash
+python build.py
+```
+
+После сборки:
+
+```bash
+python -m http.server -d dist 8080
+```
+
+## Важно
+
+- LM Studio endpoint может отличаться по модели и настройкам.
+- Подтягивай актуальное имя модели из интерфейса LM Studio.
+- В коде можно переопределить model через `.env` или HTTP-параметры.
+
+## Почему это решение сейчас
+
+Проблемы с Ollama на Windows (порты, запуск сервера, конфликт процессов) резко усложняют локальные тесты. LM Studio даёт более стабильный OpenAI-совместимый API и быстрее приводит проект к рабочему состоянию.
+
+Сайт и AI-слой разделены: frontend/site продолжает жить отдельно, а AI-логика запускается локально и тестируется независимо.
